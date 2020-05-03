@@ -18,6 +18,15 @@ class CourseManager(private val plugin: ParkourPlugin) {
      */
     fun addCourse(course: Course) {
         courses.add(course)
+        storage.saveCourse(course)
+    }
+
+    /**
+     * Remove a course.
+     */
+    fun removeCourse(course: Course) {
+        courses.remove(course)
+        storage.removeCourse(course)
     }
 
     /**

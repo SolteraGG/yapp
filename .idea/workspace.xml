@@ -38,12 +38,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="075ecc99-842a-4d43-adca-9417a0bd8057" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/commands/ParkourCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/commands/ParkourCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/courses/CourseManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/courses/CourseManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/courses/CourseStorage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/courses/CourseStorage.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/players/EditingSession.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/players/EditingSession.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/utils/Configuration.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/utils/Configuration.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/utils/Language.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/dumbdogdiner/parkour/utils/Language.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,5 +105,11 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="305" y="124" width="670" height="676" key="search.everywhere.popup" timestamp="1588546780491">
+      <screen x="0" y="0" width="1280" height="800" />
+    </state>
+    <state x="305" y="124" width="670" height="676" key="search.everywhere.popup/0.0.1280.800@0.0.1280.800" timestamp="1588546780491" />
   </component>
 </project>

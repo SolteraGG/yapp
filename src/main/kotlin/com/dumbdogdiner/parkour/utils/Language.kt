@@ -31,6 +31,8 @@ object Language {
 
     val createEditingSession
         get() = "$prefix${get("${path}.createEditingSession")}"
+    val courseNotFound
+        get() = "$prefix${get("${path}.courseNotFound")}"
     val checkpointNotFound
         get() = "$prefix${get("${path}.checkpointNotFound")}"
     val checkpointExists

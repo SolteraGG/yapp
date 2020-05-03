@@ -76,4 +76,11 @@ class CourseStorage(private val manager: CourseManager) {
         section.set("description", course.description)
         section.set("checkpoints", course.getCheckpoints())
     }
+
+    /**
+     * Delete a course from the config.
+     */
+    fun removeCourse(course: Course) {
+        config.set(course.id.toString(), null)
+    }
 }

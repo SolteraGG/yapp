@@ -64,8 +64,10 @@ class ParkourCommand : TabExecutor {
             return
         }
 
+        //
         var course = Course(plugin.courseManager)
         course.id = plugin.courseManager.getCourses().size
+
         plugin.sessionManager.createEditingSession(sender, course, EditingSession.Type.CREATE)
     }
 
@@ -76,10 +78,13 @@ class ParkourCommand : TabExecutor {
         }
 
         if (args.size < 2 || args[1].toIntOrNull() == null) {
-            sender.sendMessage(Language.invalidCommandUsage.replace("%USAGE%", "/parkour delete <id>", true))
-            return;
+            return sender.sendMessage(Language.invalidCommandUsage.replace("%USAGE%", "/parkour delete <id>", true))
         }
 
         // TODO: Delete course
+        val course = plugin.courseManager.getCourses()[args[1].toInt()] as Course?
+            ?: return sender.sendMessage(Language.courseNotFound)
+
+        plugin.courseManager.removeCourse(course)
     }
 }

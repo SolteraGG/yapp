@@ -77,7 +77,6 @@ class EditingSession(private val player: Player, private val course: Course, pri
             return
         }
 
-
         course.addCheckpoint(loc)
         player.sendMessage(Language.checkpointCreated)
     }

@@ -32,6 +32,7 @@ object Configuration {
 
         // Editing linguistics
         config.addDefault(path + "createEditingSession", "Right-click on pressure plates with the Course Editor to add them to the course!")
+        config.addDefault(path + "courseNotFound", "&cThat course could not be found.")
         config.addDefault(path + "checkpointNotFound", "&cCould not find that checkpoint.")
         config.addDefault(path + "checkpointExists", "&cA checkpoint for this course already exists at this pressure plate!")
         config.addDefault(path + "checkpointCreated", "Checkpoint added!")
