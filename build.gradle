@@ -23,6 +23,7 @@ repositories {
     }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     jitpack()
 }
 
@@ -30,6 +31,8 @@ dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation(paper("1.15.2"))
     implementation(vault())
+    
+    compileOnly 'me.clip:placeholderapi:2.10.6'
 }
 
 compileKotlin {
@@ -46,7 +49,7 @@ jar {
 
 spigot {
     authors = List.of("skyefoxie")
-    softDepends = List.of("Vault")
+    softDepends = List.of("Vault", "PlaceholderAPI")
     apiVersion = "1.15"
     load = Load.STARTUP
     commands {
@@ -56,4 +59,14 @@ spigot {
             usage = "/parkour [list/create/modify/delete]"
         }
     }
+}
+
+// Bugfix for no referenced libraries when using Eclipse.
+apply plugin: 'eclipse'
+
+// Eclipse classpath bugfix
+eclipse {
+   classpath {
+        containers 'org.eclipse.buildship.core.gradleclasspathcontainer'
+   }
 }
