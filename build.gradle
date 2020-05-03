@@ -1,0 +1,59 @@
+import kr.entree.spigradle.attribute.*
+
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id 'kr.entree.spigradle' version '1.2.4'
+}
+
+group 'com.dumbdogdiner'
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
+    }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+    jitpack()
+}
+
+dependencies {
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation(paper("1.15.2"))
+    implementation(vault())
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+jar {
+    manifest { attributes 'Main-Class': 'Parkour.ParkourPluginKt' }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+spigot {
+    authors = List.of("skyefoxie")
+    softDepends = List.of("Vault")
+    apiVersion = "1.15"
+    load = Load.STARTUP
+    commands {
+        create("parkour") {
+            aliases = List.of("pk")
+            description = "Manage parkour courses"
+            usage = "/parkour [list/create/modify/delete]"
+        }
+    }
+}
