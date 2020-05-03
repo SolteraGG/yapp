@@ -64,7 +64,9 @@ class ParkourCommand : TabExecutor {
             return
         }
 
-        plugin.sessionManager.createEditingSession(sender, Course(), EditingSession.Type.CREATE)
+        var course = Course(plugin.courseManager)
+        course.id = plugin.courseManager.getCourses().size
+        plugin.sessionManager.createEditingSession(sender, course, EditingSession.Type.CREATE)
     }
 
     private fun delete(sender: CommandSender, args: Array<out String>) {
