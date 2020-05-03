@@ -27,6 +27,10 @@ class ParkourPlugin : JavaPlugin() {
         parkourCommand.setExecutor(ParkourCommand())
     }
 
+    override fun onDisable() {
+        courseManager.saveCourses()
+    }
+
     companion object {
         lateinit var instance: ParkourPlugin
     }

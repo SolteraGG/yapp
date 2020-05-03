@@ -8,6 +8,8 @@ class SessionManager(private val plugin: ParkourPlugin) {
     private val sessions = HashMap<Player, Session>()
     private val editingSessions = HashMap<Player, EditingSession>()
 
+    public val storage = SessionStorage()
+
     /**
      * Create a new player session.
      */
@@ -20,7 +22,7 @@ class SessionManager(private val plugin: ParkourPlugin) {
             return
         }
 
-        val session = Session(player, course)
+        val session = Session(this, player, course)
         sessions[player] = session
     }
 

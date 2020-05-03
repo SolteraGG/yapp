@@ -23,6 +23,9 @@ object Language {
     val invalidCommandUsage
         get() = "$prefix${get("${path}.invalidCommandUsage")}"
 
+    val newBestTime
+        get() = "$prefix${get("${path}.newBestTime")}"
+
     val listCount
         get() = "$prefix${get("${path}.listCount")}"
 
@@ -32,6 +35,13 @@ object Language {
         get() = "$prefix${get("${path}.checkpointNotFound")}"
     val checkpointExists
         get() = "$prefix${get("${path}.checkpointExists")}"
+    val badWorld
+        get() = "$prefix${get("${path}.badWorld")}"
     val checkpointCreated
         get() = "$prefix${get("${path}.checkpointCreated")}"
+    val checkpointRemoved
+        get() = "$prefix${get("${path}.checkpointRemoved")}"
+    val courseSaved
+        get() = "$prefix${get("${path}.courseSaved")}"
+
 }

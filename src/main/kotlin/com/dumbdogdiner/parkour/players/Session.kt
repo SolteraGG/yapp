@@ -1,21 +1,26 @@
 package com.dumbdogdiner.parkour.players
 
 import com.dumbdogdiner.parkour.courses.Course
+import com.dumbdogdiner.parkour.utils.Language
 import com.dumbdogdiner.parkour.utils.Utils
-import org.bukkit.ChatColor
-import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
+import java.util.*
 
-class Session(private var player: Player, private var course: Course) {
-    private var lastCheckpointId = 0
+class Session(private val manager: SessionManager, private val player: Player, private val course: Course) {
+    private var previousCheckpointId = 0
     private var nextCheckpointId = 1
 
-    private var lastCheckpoint: Location = course.getOrderedCheckpoints()[lastCheckpointId]
-    private var nextCheckpoint: Location = course.getOrderedCheckpoints()[nextCheckpointId]
+     val previousCheckpoint
+        get() = course.getCheckpoints()[previousCheckpointId]
+
+     val nextCheckpoint
+        get() = course.getCheckpoints()[nextCheckpointId]
+
+    private val startedAt = System.currentTimeMillis();
 
     private val returnItem = ItemStack(Material.EMERALD_BLOCK)
     private val resetItem = ItemStack(Material.GOLD_BLOCK)
@@ -41,39 +46,72 @@ class Session(private var player: Player, private var course: Course) {
         player.inventory.addItem(exitItem)
     }
 
-    fun nextCheckpoint() {
-        lastCheckpoint = nextCheckpoint
-        lastCheckpointId++
+    /**
+     * Advance the player onto the next checkpoint.
+     */
+    private fun nextCheckpoint() {
+        previousCheckpointId++
         nextCheckpointId++
-        nextCheckpoint = course.getOrderedCheckpoints()[nextCheckpointId]
-    }
 
-    fun getNextCheckpoint(): Location {
-        return nextCheckpoint
+        if (nextCheckpointId == course.getCheckpoints().size) {
+            finish()
+        }
     }
 
     fun revertToLastCheckpoint() {
-        player.teleport(lastCheckpoint)
+        player.teleport(previousCheckpoint)
     }
 
     fun end(returnToStart: Boolean) {
         if (returnToStart) {
-            player.teleport(course.getOrderedCheckpoints()[0])
+            player.teleport(course.getCheckpoints().first())
         }
+
+        player.inventory.remove(returnItem)
+        player.inventory.remove(resetItem)
+        player.inventory.remove(exitItem)
+    }
+
+    private fun finish() {
+        end(true)
+
+
+        val session = StoredSession()
+        session.course = course
+        session.player = player
+        session.time = ((System.currentTimeMillis() - startedAt) / 1000).toDouble()
+
+        val previous = manager.storage.getPlayerBest(player, course)
+
+        if (previous < session.time) {
+            player.sendMessage(Language.newBestTime)
+            manager.storage.storePlayerSession(session)
+        }
+    }
+
+    /**
+     * Handle the player stepping on a checkpoint pressure plate.
+     */
+    fun handleCheckpoint(e: PlayerInteractEvent) {
+        val block = e.clickedBlock ?: return
+
+        if (nextCheckpoint != block.location) {
+            return
+        }
+
+        nextCheckpoint()
     }
 
     /**
      * Reset the editor tool.
      */
     fun handleDropEvent(e: PlayerDropItemEvent) {
-        controls.forEach { stack ->
-            run {
-                if (
-                    stack.type == e.itemDrop.itemStack.type &&
-                    stack.itemMeta.displayName == e.itemDrop.itemStack.itemMeta.displayName
-                ) {
-                    e.isCancelled = true
-                }
+        controls.forEach {
+            if (
+                it.type == e.itemDrop.itemStack.type &&
+                it.itemMeta.displayName == e.itemDrop.itemStack.itemMeta.displayName
+            ) {
+                e.isCancelled = true
             }
         }
     }

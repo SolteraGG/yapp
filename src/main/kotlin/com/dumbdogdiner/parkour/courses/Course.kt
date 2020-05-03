@@ -1,43 +1,60 @@
 package com.dumbdogdiner.parkour.courses
 
-import com.dumbdogdiner.parkour.utils.Utils
 import org.bukkit.Location
 
-class Course() {
+class Course(private val manager: CourseManager) {
+
+    var id = -1
+    var name = ""
+    var description = ""
+
     // Object accesses are quicker than lists?
-    private var checkpoints = HashMap<String, Location>()
-    private var checkpointArray = mutableListOf<Location>()
+    private val checkpoints = mutableListOf<Location>()
 
     fun addCheckpoint(loc: Location) {
-        checkpoints[Utils.makeShortCoords(loc)] = loc
-        checkpointArray.add(loc)
+        checkpoints.add(loc)
+        save()
     }
 
-    fun removeCheckpoint(id: Int) {
-        var checkpoint = checkpointArray.removeAt(id)
-        checkpoints.remove(Utils.makeShortCoords(checkpoint))
+    /**
+     * Remove a checkpoint given its index.
+     */
+    fun removeCheckpoint(index: Int): Location {
+        val checkpoint = checkpoints.removeAt(index)
+
+        save()
+        return checkpoint
     }
 
+    /**
+     * Remove a checkpoint at a given location.
+     */
     fun removeCheckpoint(loc: Location): Boolean {
-        val id = getCheckpointId(loc)
-        if (id != null) {
-            removeCheckpoint(id)
-            return true
-        }
+        val checkpoint = findCheckpoint(loc) ?: return false
+        checkpoints.remove(checkpoint)
+
+        save()
         return false
     }
 
-    fun getCheckpoints(): HashMap<String, Location> {
+    /**
+     * Find a checkpoint with the given location.
+     */
+    fun findCheckpoint(loc: Location): Location? {
+        return checkpoints.find { it == loc }
+    }
+
+    /**
+     * Return an ordered array of checkpoints.
+     */
+    fun getCheckpoints(): MutableList<Location> {
         return checkpoints
     }
 
-    fun getCheckpointId(loc: Location): Int? {
-        return checkpointArray.indexOf(checkpoints[Utils.makeShortCoords(loc)])
+    /**
+     * Save this course to storage.
+     */
+    fun save() {
+        manager.storage.saveCourse(this)
     }
-
-    fun getOrderedCheckpoints(): MutableList<Location> {
-        return checkpointArray
-    }
-
-    fun save() {}
 }

@@ -1,15 +1,15 @@
 package com.dumbdogdiner.parkour.courses
 
 import com.dumbdogdiner.parkour.ParkourPlugin
-import com.dumbdogdiner.parkour.utils.Configuration
 import com.dumbdogdiner.parkour.utils.Utils
 import org.bukkit.Location
 
 class CourseManager(private val plugin: ParkourPlugin) {
-    private var courses = HashMap<String, Course>()
+    private val courses = mutableListOf<Course>()
+    val storage = CourseStorage(this)
 
     init {
-        Configuration.getCourses().forEach { course -> addCourse(course) }
+        storage.fetchCourses().forEach { this.addCourse(it) }
         Utils.log("Loaded ${courses.size} courses from configuration.")
     }
 
@@ -17,18 +17,21 @@ class CourseManager(private val plugin: ParkourPlugin) {
      * Add a course.
      */
     fun addCourse(course: Course) {
-        courses[Utils.makeShortCoords(course.getOrderedCheckpoints()[0])]
+        courses.add(course)
     }
 
-    fun getCourse(k: String): Course? {
-        return courses[k]
-    }
-
-    fun getCourse(loc: Location): Course? {
-        return courses[Utils.makeShortCoords(loc)]
+    /**
+     * Find a course who's first checkpoint is at the given location.
+     */
+    fun findCourseFromStart(location: Location): Course? {
+        return courses.find { it.getCheckpoints()[0] == location }
     }
 
     fun getCourses(): List<Course> {
-        return courses.values.toList()
+        return courses
+    }
+
+    fun saveCourses() {
+        storage.saveCourses(courses)
     }
 }

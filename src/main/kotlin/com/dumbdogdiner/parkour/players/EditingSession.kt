@@ -5,10 +5,9 @@ import com.dumbdogdiner.parkour.utils.Language
 import com.dumbdogdiner.parkour.utils.Utils
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -16,7 +15,7 @@ import org.bukkit.inventory.ItemStack
  *
  * TODO: Check for bad people trying to create parkours across multiple worlds >:C
  */
-class EditingSession(private var player: Player, private var course: Course, private var type: EditingSession.Type) {
+class EditingSession(private val player: Player, private val course: Course, private val type: Type) {
     private val editorTool: ItemStack = ItemStack(Material.BLAZE_ROD, 1)
 
     enum class Type {
@@ -37,41 +36,64 @@ class EditingSession(private var player: Player, private var course: Course, pri
     }
 
     /**
-     * Handle a checkpoint clicked event.
-     */
-    fun handleCheckpointClicked(loc: Location) {
-        when (type) {
-            Type.CREATE -> addCheckpoint(loc)
-            Type.DELETE -> course.removeCheckpoint(loc)
-            Type.MODIFY -> {}
-        }
-    }
-
-    fun addCheckpoint(loc: Location) {
-        val checkpoint: Location? = course.getCheckpoints()[Utils.makeShortCoords(loc)]
-        if (checkpoint != null) {
-            player.sendMessage(Language.checkpointExists)
-            return
-        }
-
-        course.addCheckpoint(loc)
-        player.sendMessage(Language.checkpointCreated)
-    }
-
-    /**
-     * Get the course being modified.
-     */
-    fun getCourse(): Course {
-        return course
-    }
-
-    /**
      * End this editing session.
      */
     fun end() {
         player.inventory.remove(editorTool)
         course.save()
+        player.sendMessage(Language.courseSaved)
     }
+
+    /**
+     * Handle a checkpoint clicked event.
+     */
+    fun handleCheckpointClicked(e: PlayerInteractEvent) {
+        val item = e.item ?: return
+        val block = e.clickedBlock ?: return
+
+        if (item.type != Material.BLAZE_ROD || item.itemMeta.displayName != Utils.colorize("&r&6&lCourse Editor")) {
+            return
+        }
+
+        when (type) {
+            Type.CREATE -> addCheckpoint(block.location)
+            Type.DELETE -> removeCheckpoint(block.location)
+            Type.MODIFY -> {}
+        }
+    }
+
+    /**
+     * Add a checkpoint to the course.
+     */
+    private fun addCheckpoint(loc: Location) {
+        if (course.getCheckpoints().last().world != loc.world) {
+            player.sendMessage(Language.badWorld)
+            return
+        }
+
+        val checkpoint: Location? = course.findCheckpoint(loc)
+        if (checkpoint != null) {
+            player.sendMessage(Language.checkpointExists)
+            return
+        }
+
+
+        course.addCheckpoint(loc)
+        player.sendMessage(Language.checkpointCreated)
+    }
+
+    private fun removeCheckpoint(loc: Location) {
+        val checkpoint = course.findCheckpoint(loc)
+
+        if (checkpoint == null) {
+            player.sendMessage(Language.checkpointNotFound)
+            return
+        }
+
+        course.removeCheckpoint(checkpoint)
+        player.sendMessage(Language.checkpointRemoved)
+    }
+
 
     /**
      * Reset the editor tool.
