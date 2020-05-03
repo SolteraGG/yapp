@@ -22,6 +22,11 @@ class ParkourPlugin : JavaPlugin() {
         sessionManager = SessionManager(this)
 
         server.pluginManager.registerEvents(PlayerInteractListener(this), this)
+		
+		// Register PAPI expansion if available.
+		if (server.pluginManager.getPlugin("PlaceholderAPI") != null) {
+			PapiExpansion(this).register()
+		}
 
         val parkourCommand = getCommand("parkour")!!
         parkourCommand.setExecutor(ParkourCommand())
