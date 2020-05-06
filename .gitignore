@@ -53,3 +53,7 @@ gradle-app.setting
 
 # Eclipse Gradle Plugin
 /bin/
+
+
+# don't remove pls
+.DS_Store
