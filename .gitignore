@@ -44,6 +44,7 @@ gradle-app.setting
 .classpath
 .project
 .vscode/
+.idea/
 
 # Eclipse 2020
 .settings/
@@ -53,7 +54,6 @@ gradle-app.setting
 
 # Eclipse Gradle Plugin
 /bin/
-
 
 # don't remove pls
 .DS_Store
