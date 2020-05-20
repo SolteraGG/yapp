@@ -2,6 +2,9 @@ package com.dumbdogdiner.parkour.courses
 
 import com.dumbdogdiner.parkour.Base
 import com.okkero.skedule.schedule
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 import org.bukkit.Location
 
@@ -12,6 +15,7 @@ class CourseManager : Base {
     init {
         // Schedule course loading one tick after worlds are loaded.
         plugin.schedule {
+            waitFor(1)
             logger.info("Worlds are loaded - reading course configuration...")
             storage.fetchCourses().forEach { addCourse(it, true) }
             logger.info("Loaded ${courses.size} courses from configuration.")

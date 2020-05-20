@@ -6,13 +6,14 @@ import com.dumbdogdiner.parkour.utils.Utils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
-/**
- * Listens for player interaction events e.g. stepping on pressure plates, right-clicking with tools.
- */
-class PlayerInteractListener() : Listener, Base {
+class PlayerSessionListener : Listener, Base {
 
+    /**
+     * Listens for player interaction events e.g. stepping on pressure plates, right-clicking with tools.
+     */
     @EventHandler
     fun onPlayerInteract(e: PlayerInteractEvent) {
         if (handleNextCheckpoint(e)) {
@@ -27,6 +28,19 @@ class PlayerInteractListener() : Listener, Base {
             return
         }
     }
+    /**
+     * Prevent players from dropping editor tools, or session controls.
+     */
+
+    @EventHandler
+    fun onPlayerItemDrop(e: PlayerDropItemEvent) {
+        if (sessionManager.isPlayerInSession(e.player)) {
+            sessionManager.getSession(e.player)?.handleDropEvent(e)
+        } else if (editingSessionManager.isPlayerInEditingSession(e.player)) {
+            editingSessionManager.getEditingSession(e.player)?.handleDropEvent(e)
+        }
+    }
+
 
     /**
      * Handle a player stepping on a pressure plate while they are in a parkour session.

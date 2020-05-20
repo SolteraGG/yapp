@@ -9,12 +9,14 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 
 /**
  * A player's editing session.
+ * TODO: are all these clones really necessary?
  */
 class EditingSession(val player: Player, val course: Course, private val type: Type) : Base {
     private val editorTool = createItemTool()
@@ -139,6 +141,14 @@ class EditingSession(val player: Player, val course: Course, private val type: T
 
         editingSessionManager.endEditingSession(this, dropProgress)
         e.itemDrop.remove()
+    }
+
+    /**
+     * Handle the editor dying. Why this would ever happen I can't say.
+     */
+    fun handleEditorDeath(e: PlayerDeathEvent) {
+        e.itemsToKeep.add(editorTool.clone())
+        e.drops.remove(editorTool.clone())
     }
 
     companion object {
