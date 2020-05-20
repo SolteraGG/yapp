@@ -48,11 +48,11 @@ class EditingSessionManager : Base {
      * End a editor session.
      */
     fun endEditingSession(session: EditingSession, dropProgress: Boolean = false) {
-        session.end(dropProgress)
+        val course = session.end(dropProgress)
         editingSessions.remove(session.player)
 
         if (!dropProgress) {
-            plugin.courseManager.updateCourse(session.course)
+            plugin.courseManager.addCourse(course)
         }
 
         logger.info("Ended editing session for player '${session.player.uniqueId}'.")

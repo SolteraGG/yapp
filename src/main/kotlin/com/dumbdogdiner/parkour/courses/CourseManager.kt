@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import org.bukkit.Location
 
 class CourseManager : Base {
-    private val courses = mutableListOf<Course>()
+    private val courses = HashMap<String, Course>()
     private val storage = CourseStorage()
 
     init {
@@ -25,28 +25,11 @@ class CourseManager : Base {
     /**
      * Add a course.
      */
-    fun addCourse(course: Course, preventLog: Boolean = false) {
-        if (course.id == -1) {
-            course.id = this.courses.size
-        }
-
-        courses.add(course)
-        storage.saveCourse(course)
-
-        if (preventLog) {
+    fun addCourse(course: Course, preventSave: Boolean = false) {
+        courses[course.id.toString()] = course
+        if (preventSave) {
             return
         }
-    }
-
-    /**
-     * Update a course.
-     */
-    fun updateCourse(course: Course) {
-        if (courses.size < course.id) {
-            return addCourse(course)
-        }
-
-        courses[course.id] = course
         storage.saveCourse(course)
     }
 
@@ -54,7 +37,7 @@ class CourseManager : Base {
      * Remove a course.
      */
     fun removeCourse(course: Course) {
-        courses.remove(course)
+        courses.remove(course.id.toString())
         storage.removeCourse(course)
     }
 
@@ -62,20 +45,20 @@ class CourseManager : Base {
      * Find a course who's first checkpoint is at the given location.
      */
     fun findCourseFromStart(location: Location): Course? {
-        return courses.find { it.getCheckpoints()[0] == location }
+        return courses.values.find { it.getCheckpoints()[0] == location }
     }
 
     /**
      * Fetch all loaded courses.
      */
     fun getCourses(): List<Course> {
-        return courses
+        return courses.values.toList()
     }
 
     /**
      * Save all courses currently in memory.
      */
     fun saveCourses() {
-        storage.saveCourses(courses)
+        storage.saveCourses(courses.values.toMutableList())
     }
 }

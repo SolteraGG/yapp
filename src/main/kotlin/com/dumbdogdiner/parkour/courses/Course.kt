@@ -1,16 +1,20 @@
 package com.dumbdogdiner.parkour.courses
 
 import com.dumbdogdiner.parkour.Base
+import com.dumbdogdiner.parkour.structures.Pad
+
 import org.bukkit.Location
+import java.util.*
 
 class Course : Base {
 
-    var id = -1
+    var id: UUID = UUID.randomUUID()
     var name = ""
     var description = ""
 
     // Object accesses are quicker than lists?
     private val checkpoints = mutableListOf<Location>()
+    private val features = mutableListOf<Pad>()
 
     /**
      * Add a checkpoint to this course.

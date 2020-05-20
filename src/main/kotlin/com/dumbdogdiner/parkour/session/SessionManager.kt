@@ -24,7 +24,7 @@ class SessionManager : Base {
         val session = Session(this, player, course)
         sessions[player] = session
 
-        logger.info("Created editing session for player '${player.uniqueId}'.")
+        logger.info("Created parkour session for player '${player.uniqueId}'.")
         return session
     }
 
@@ -41,7 +41,7 @@ class SessionManager : Base {
     fun endSession(player: Player, returnToStart: Boolean) {
         getSession(player)?.end(returnToStart)
         sessions.remove(player)
-        logger.info("Ended session for player '${player.uniqueId}'.")
+        logger.info("Ended parkour session for player '${player.uniqueId}'.")
     }
 
     /**

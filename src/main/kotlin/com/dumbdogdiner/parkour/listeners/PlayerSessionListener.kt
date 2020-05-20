@@ -47,11 +47,11 @@ class PlayerSessionListener : Listener, Base {
      */
     private fun handleNextCheckpoint(e: PlayerInteractEvent): Boolean {
         val block = e.clickedBlock
-        if (e.action != Action.PHYSICAL || block == null || Utils.isPressurePlate(block.type)) { return false }
+        if (e.action != Action.PHYSICAL || block == null || !Utils.isPressurePlate(block.type)) { return false }
 
         // If the player isn't in a session, and respective block is the first checkpoint
         val course = plugin.courseManager.findCourseFromStart(block.location)
-        if (course != null) {
+        if (course != null && !plugin.sessionManager.isPlayerInSession(e.player)) {
             plugin.sessionManager.createSession(e.player, course)
             return true
         }

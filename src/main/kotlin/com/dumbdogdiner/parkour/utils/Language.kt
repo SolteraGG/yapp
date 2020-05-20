@@ -22,12 +22,17 @@ object Language {
     val invalidCommandUsage
         get() = "$prefix${get("$path.invalidCommandUsage")}"
 
+    // Session linguistics
     val newBestTime
         get() = "$prefix${get("$path.newBestTime")}"
 
+    // Command-specific
     val listCount
         get() = "$prefix${get("$path.listCount")}"
+    val courseDeleted
+        get() = "$prefix${get("$path.courseDeleted")}"
 
+    // Editing linguistics
     val createEditingSession
         get() = "$prefix${get("$path.createEditingSession")}"
     val courseNotFound
@@ -48,4 +53,5 @@ object Language {
         get() = "$prefix${get("$path.checkpointRemoved")}"
     val courseSaved
         get() = "$prefix${get("$path.courseSaved")}"
+
 }

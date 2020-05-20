@@ -36,22 +36,18 @@ class EditingSession(val player: Player, val course: Course, private val type: T
     /**
      * End this editing session.
      */
-    fun end(dropProgress: Boolean) {
+    fun end(dropProgress: Boolean): Course {
         val tool = player.inventory.find { itemStack -> itemStack == editorTool.clone()  }
         if (tool != null) {
             player.inventory.remove(tool)
         }
 
         if (!dropProgress) {
-            if (type == Type.CREATE) {
-                courseManager.addCourse(course)
-            } else {
-                courseManager.updateCourse(course)
-            }
-
             player.sendMessage(Language.courseSaved)
             SoundUtils.success(player)
         }
+
+        return course
     }
 
     /**

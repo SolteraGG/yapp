@@ -8,42 +8,23 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.ItemStack
 
 class Session(private val manager: SessionManager, private val player: Player, private val course: Course) {
     private var previousCheckpointId = 0
     private var nextCheckpointId = 1
 
-    val previousCheckpoint
+    private val previousCheckpoint
         get() = course.getCheckpoints()[previousCheckpointId]
 
-    val nextCheckpoint
+    private val nextCheckpoint
         get() = course.getCheckpoints()[nextCheckpointId]
 
     private val startedAt = System.currentTimeMillis()
 
-    private val returnItem = ItemStack(Material.EMERALD_BLOCK)
-    private val resetItem = ItemStack(Material.GOLD_BLOCK)
-    private val exitItem = ItemStack(Material.REDSTONE_BLOCK)
-
-    private val controls = mutableListOf(returnItem, resetItem, exitItem)
-
     init {
-        val returnItemMeta = returnItem.itemMeta
-        returnItemMeta.setDisplayName(Utils.colorize("&aReturn to Checkpoint"))
-        returnItem.itemMeta = returnItemMeta
-
-        val resetItemMeta = resetItem.itemMeta
-        resetItemMeta.setDisplayName(Utils.colorize("&eRestart Course"))
-        resetItem.itemMeta = resetItemMeta
-
-        val exitItemMeta = exitItem.itemMeta
-        exitItemMeta.setDisplayName(Utils.colorize("&cExit Course"))
-        exitItem.itemMeta = returnItemMeta
-
-        player.inventory.addItem(returnItem)
-        player.inventory.addItem(resetItem)
-        player.inventory.addItem(exitItem)
+        player.inventory.addItem(returnItem.clone())
+        player.inventory.addItem(resetItem.clone())
+        player.inventory.addItem(exitItem.clone())
     }
 
     /**
@@ -113,5 +94,24 @@ class Session(private val manager: SessionManager, private val player: Player, p
                 e.isCancelled = true
             }
         }
+    }
+
+    companion object {
+        val returnItem = Utils.createItemStack(Material.EMERALD_BLOCK) {
+            it.setDisplayName("&aReset");
+            it.lore = Utils.colorize(listOf("Right click to return to the previous checkpoint.", "&cYour elapsed time will not reset."));
+            it
+        }
+        val resetItem = Utils.createItemStack(Material.GOLD_BLOCK) {
+            it.setDisplayName("&aRestart");
+            it.lore = Utils.colorize(listOf("Right click to return to the start of the course.", "Your elapsed time &awill &rbe reset."));
+            it
+        }
+        val exitItem = Utils.createItemStack(Material.REDSTONE_BLOCK) {
+            it.setDisplayName("&aExit");
+            it.lore = Utils.colorize(listOf("Right click to exit this course.", "&cYour elapsed time will not reset."));
+            it
+        }
+        val controls = listOf(returnItem, resetItem, exitItem)
     }
 }

@@ -2,6 +2,7 @@ package com.dumbdogdiner.parkour.courses
 
 import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.ParkourPlugin
+import org.bukkit.Bukkit
 
 import java.io.File
 import java.io.IOException
@@ -10,6 +11,7 @@ import org.bukkit.Location
 import org.bukkit.configuration.InvalidConfigurationException
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
+import java.util.*
 
 /**
  * Wrapper class for storing course data.
@@ -48,13 +50,15 @@ class CourseStorage : Base {
         for (key in config.getKeys(false)) {
             val course = Course()
 
-            course.id = key.toInt()
+            course.id = UUID.fromString(key)
             config.getConfigurationSection(key)?.getString("name")?.let { course.name = it }
             config.getConfigurationSection(key)?.getString("description")?.let { course.description = it }
 
             // TODO: Potential bug material.
-            val checkpoints: MutableList<Location> = fetchCourseCheckpoints(key) ?: continue
+            val checkpoints: List<Location> = fetchCourseCheckpoints(key) ?: continue
+
             checkpoints.forEach { course.addCheckpoint(it) }
+            courses.add(course)
         }
 
         return courses
@@ -63,9 +67,16 @@ class CourseStorage : Base {
     /**
      * Fetch a course's checkpoints from storage.
      */
-    fun fetchCourseCheckpoints(id: String): MutableList<Location>? {
-        @Suppress("UNCHECKED_CAST")
-        return config.getConfigurationSection(id)?.getList("checkpoints") as MutableList<Location>
+    fun fetchCourseCheckpoints(id: String): List<Location>? {
+        val section = config.getConfigurationSection(id) ?: return null
+        val res = mutableListOf<Location>()
+
+        for (checkpoint in section.getStringList("checkpoints")) {
+            val loc = deserializeLocation(checkpoint) ?: return null
+            res.add(loc)
+        }
+
+        return res
     }
 
     /**
@@ -74,7 +85,7 @@ class CourseStorage : Base {
     fun saveCourses(courses: MutableList<Course>) {
         courses.forEach { saveCourse(it, true) }
         config.save(file)
-        logger.info("Saved ${courses.size} to disk.")
+        logger.info("Saved ${courses.size} courses to disk.")
     }
 
     /**
@@ -89,13 +100,13 @@ class CourseStorage : Base {
 
         section.set("name", course.name)
         section.set("description", course.description)
-        section.set("checkpoints", course.getCheckpoints())
+        section.set("checkpoints", course.getCheckpoints().map { serializeLocation(it) })
 
         if (skipSave) {
             return
         }
         config.save(file)
-        logger.info("Saved course ID: ${course.id} to disk.")
+        logger.info("Saved course '${course.id}' to disk.")
     }
 
     /**
@@ -103,6 +114,28 @@ class CourseStorage : Base {
      */
     fun removeCourse(course: Course) {
         config.set(course.id.toString(), null)
-        logger.info("Deleted course ID: ${course.id} from disk.")
+        logger.info("Deleted course '${course.id}' from disk.")
+    }
+
+    companion object : Base {
+        fun serializeLocation(loc: Location): String {
+            return "${loc.world.name}:${loc.x}:${loc.y}:${loc.z}"
+        }
+        fun deserializeLocation(raw: String): Location? {
+            val delimited = raw.split(":")
+
+            if (delimited.size != 4) {
+                logger.warning("Failed to deserilize location '$raw' - invalid length.")
+                return null
+            }
+
+            val world = Bukkit.getWorld(delimited[0])
+            if (world == null) {
+                logger.warning("Failed to deserilize location '$raw' - world '${delimited[0]}' does not exist.")
+                return null
+            }
+
+            return Location(world, delimited[1].toDouble(), delimited[2].toDouble(), delimited[3].toDouble())
+        }
     }
 }

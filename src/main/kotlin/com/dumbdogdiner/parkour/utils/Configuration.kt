@@ -31,6 +31,7 @@ object Configuration {
 
         // Command-specific linguistics.
         config.addDefault(path + "listCount", "There are currently %COUNT% courses.")
+        config.addDefault(path + "courseDeleted", "Course '%NAME%' deleted.")
 
         // Editing linguistics
         config.addDefault(path + "createEditingSession", "Right-click on pressure plates with the Course Editor to add them to the course!")
