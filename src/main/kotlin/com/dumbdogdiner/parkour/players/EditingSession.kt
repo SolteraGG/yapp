@@ -113,26 +113,38 @@ class EditingSession(private val player: Player, private val course: Course, pri
     }
 
     /**
-     * Reset the editor tool.
+     * Exit the editor when an item is dropped.
+     *
+     * If the player has added less than two checkpoints i.e. no start or end point, the
+     * editor will drop the current progress and inform the user it is doing such.
      */
     fun handleDropEvent(e: PlayerDropItemEvent) {
         val editorTool = createItemTool()
+
         if (
             e.itemDrop.itemStack != editorTool
         ) {
             return
         }
 
+        var discard = false
+
+        // If there isn't a start and an endpoint, discard progress.
         if (course.getCheckpoints().size < 2) {
             player.sendMessage(Language.badLength)
             SoundUtils.error(player)
+            discard = true
         }
 
-        plugin.sessionManager.endEditingSession(player)
+        plugin.sessionManager.endEditingSession(player, discard)
         e.itemDrop.remove()
     }
 
     companion object {
+        /**
+         * Create a carbon copy of the editor tool used.
+         * TODO: See if ItemStack.clone() would be more efficient.
+         */
         fun createItemTool(): ItemStack {
             val editorTool = ItemStack(Material.BLAZE_ROD, 1)
 
