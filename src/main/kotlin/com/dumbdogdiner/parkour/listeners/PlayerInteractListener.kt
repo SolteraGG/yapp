@@ -1,7 +1,8 @@
 package com.dumbdogdiner.parkour.listeners
 
-import com.dumbdogdiner.parkour.ParkourPlugin
+import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.utils.Utils
+
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -10,7 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 /**
  * Listens for player interaction events e.g. stepping on pressure plates, right-clicking with tools.
  */
-class PlayerInteractListener(private val plugin: ParkourPlugin) : Listener {
+class PlayerInteractListener() : Listener, Base {
 
     @EventHandler
     fun onPlayerInteract(e: PlayerInteractEvent) {
@@ -53,7 +54,7 @@ class PlayerInteractListener(private val plugin: ParkourPlugin) : Listener {
      */
     private fun handleCheckpointClicked(e: PlayerInteractEvent): Boolean {
         val block = e.clickedBlock
-        if (e.action != Action.RIGHT_CLICK_BLOCK || block == null || !Utils.isPressurePlate(block.type)) { return false }
+        if (e.action != Action.RIGHT_CLICK_BLOCK || block == null) { return false }
 
         val session = plugin.sessionManager.getEditingSession(e.player) ?: return false
 
@@ -62,13 +63,12 @@ class PlayerInteractListener(private val plugin: ParkourPlugin) : Listener {
     }
 
     private fun handleClickWithControls(e: PlayerInteractEvent): Boolean {
-        if (e.action != Action.RIGHT_CLICK_BLOCK || e.action != Action.RIGHT_CLICK_AIR) {
+        if (e.action != Action.RIGHT_CLICK_BLOCK || e.action != Action.RIGHT_CLICK_AIR || !e.hasItem()) {
             return false
         }
 
         val session = plugin.sessionManager.getSession(e.player) ?: return false
         session.handleCheckpoint(e)
-
 
         return true
     }

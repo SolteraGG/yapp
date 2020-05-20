@@ -1,6 +1,7 @@
 package com.dumbdogdiner.parkour.listeners
 
-import com.dumbdogdiner.parkour.ParkourPlugin
+import com.dumbdogdiner.parkour.Base
+
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerDropItemEvent
@@ -10,7 +11,7 @@ import org.bukkit.event.player.PlayerDropItemEvent
  *
  * TODO: Finish editing session on drop editor tool.
  */
-class PlayerDropItemListener(private var plugin: ParkourPlugin) : Listener {
+class PlayerDropItemListener() : Listener, Base {
     @EventHandler
     fun onPlayerItemDrop(e: PlayerDropItemEvent) {
         if (plugin.sessionManager.isPlayerInSession(e.player)) {

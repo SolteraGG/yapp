@@ -1,10 +1,11 @@
 package com.dumbdogdiner.parkour.players
 
+import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.ParkourPlugin
 import com.dumbdogdiner.parkour.courses.Course
 import org.bukkit.entity.Player
 
-class SessionManager(private val plugin: ParkourPlugin) {
+class SessionManager() : Base {
     private val sessions = HashMap<Player, Session>()
     private val editingSessions = HashMap<Player, EditingSession>()
 
@@ -13,17 +14,20 @@ class SessionManager(private val plugin: ParkourPlugin) {
     /**
      * Create a new player session.
      */
-    fun createSession(player: Player, course: Course) {
+    fun createSession(player: Player, course: Course): Session? {
         if (isPlayerInSession(player)) {
             endSession(player, false)
         }
 
         if (isPlayerInEditingSession(player)) {
-            return
+            return null
         }
 
         val session = Session(this, player, course)
         sessions[player] = session
+
+        logger.info("Created editing session for player '${player.uniqueId}'.")
+        return session
     }
 
     /**
@@ -39,6 +43,7 @@ class SessionManager(private val plugin: ParkourPlugin) {
     fun endSession(player: Player, returnToStart: Boolean) {
         getSession(player)?.end(returnToStart)
         sessions.remove(player)
+        logger.info("Ended session for player '${player.uniqueId}'.")
     }
 
     /**
@@ -65,6 +70,8 @@ class SessionManager(private val plugin: ParkourPlugin) {
 
         val editingSession = EditingSession(player, course, type)
         editingSessions[player] = editingSession
+
+        logger.info("Created editing session for player '${player.uniqueId}'.")
         return editingSession
     }
 
@@ -78,9 +85,10 @@ class SessionManager(private val plugin: ParkourPlugin) {
     /**
      * End a player's current editing session.
      */
-    fun endEditingSession(player: Player) {
+    fun endEditingSession(player: Player, dropProgress: Boolean = false) {
         getEditingSession(player)?.end()
         editingSessions.remove(player)
+        logger.info("Ended editing session for player '${player.uniqueId}'.")
     }
 
     /**

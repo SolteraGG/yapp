@@ -1,13 +1,12 @@
 package com.dumbdogdiner.parkour.courses
 
 import com.dumbdogdiner.parkour.ParkourPlugin
-import org.bukkit.configuration.InvalidConfigurationException
-import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import java.io.IOException
 import org.bukkit.Location
-
+import org.bukkit.configuration.InvalidConfigurationException
+import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.configuration.file.YamlConfiguration
 
 class CourseStorage(private val manager: CourseManager) {
     private val file: File
@@ -46,7 +45,9 @@ class CourseStorage(private val manager: CourseManager) {
             config.getConfigurationSection(key)?.getString("name")?.let { course.name = it }
             config.getConfigurationSection(key)?.getString("description")?.let { course.description = it }
 
-            fetchCourseCheckpoints(key).forEach { course.addCheckpoint(it) }
+            // TODO: Potential bug material.
+            val checkpoints: MutableList<Location> = fetchCourseCheckpoints(key) ?: continue
+            checkpoints.forEach { course.addCheckpoint(it) }
         }
 
         return courses
@@ -55,7 +56,8 @@ class CourseStorage(private val manager: CourseManager) {
     /**
      * Fetch a course's checkpoints from storage.
      */
-    fun fetchCourseCheckpoints(id: String): MutableList<Location> {
+    fun fetchCourseCheckpoints(id: String): MutableList<Location>? {
+        @Suppress("UNCHECKED_CAST")
         return config.getConfigurationSection(id)?.getList("checkpoints") as MutableList<Location>
     }
 
@@ -70,7 +72,11 @@ class CourseStorage(private val manager: CourseManager) {
      * Save a course to disk.
      */
     fun saveCourse(course: Course) {
-        val section = config.getConfigurationSection(course.id.toString())!!
+        var section = config.getConfigurationSection(course.id.toString())
+
+        if (section == null) {
+            section = config.createSection(course.id.toString())
+        }
 
         section.set("name", course.name)
         section.set("description", course.description)

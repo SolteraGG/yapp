@@ -1,16 +1,17 @@
 package com.dumbdogdiner.parkour.courses
 
+import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.ParkourPlugin
 import com.dumbdogdiner.parkour.utils.Utils
 import org.bukkit.Location
 
-class CourseManager(private val plugin: ParkourPlugin) {
+class CourseManager : Base {
     private val courses = mutableListOf<Course>()
     val storage = CourseStorage(this)
 
     init {
         storage.fetchCourses().forEach { this.addCourse(it) }
-        Utils.log("Loaded ${courses.size} courses from configuration.")
+        logger.info("Loaded ${courses.size} courses from configuration.")
     }
 
     /**

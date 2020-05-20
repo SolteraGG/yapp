@@ -3,24 +3,24 @@ package com.dumbdogdiner.parkour.players
 import com.dumbdogdiner.parkour.courses.Course
 import com.dumbdogdiner.parkour.utils.Language
 import com.dumbdogdiner.parkour.utils.Utils
+
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
-import java.util.*
 
 class Session(private val manager: SessionManager, private val player: Player, private val course: Course) {
     private var previousCheckpointId = 0
     private var nextCheckpointId = 1
 
-     val previousCheckpoint
+    val previousCheckpoint
         get() = course.getCheckpoints()[previousCheckpointId]
 
-     val nextCheckpoint
+    val nextCheckpoint
         get() = course.getCheckpoints()[nextCheckpointId]
 
-    private val startedAt = System.currentTimeMillis();
+    private val startedAt = System.currentTimeMillis()
 
     private val returnItem = ItemStack(Material.EMERALD_BLOCK)
     private val resetItem = ItemStack(Material.GOLD_BLOCK)
@@ -74,7 +74,6 @@ class Session(private val manager: SessionManager, private val player: Player, p
 
     private fun finish() {
         end(true)
-
 
         val session = StoredSession()
         session.course = course

@@ -1,22 +1,20 @@
 package com.dumbdogdiner.parkour.players
 
+import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.ParkourPlugin
 import com.dumbdogdiner.parkour.courses.Course
+import java.io.File
+import java.io.IOException
 import org.bukkit.configuration.InvalidConfigurationException
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
-import java.io.File
-import java.io.IOException
 
-class SessionStorage {
-    private val file: File
+class SessionStorage : Base {
+    private val file: File = File(plugin.dataFolder, "records.yml")
     private val config: FileConfiguration
 
-    private val plugin = ParkourPlugin.instance
-
     init {
-        file = File(plugin.dataFolder, "records.yml")
 
         if (!file.exists()) {
             file.parentFile.mkdirs()
@@ -38,7 +36,7 @@ class SessionStorage {
      */
     fun fetchPlayerSession(player: Player, course: Course): StoredSession? {
         val session = StoredSession()
-        val section = config.getConfigurationSection("${course}.${player.uniqueId.toString()}") ?: return null
+        val section = config.getConfigurationSection("$course.${player.uniqueId}") ?: return null
 
         session.time = section.getDouble("time")
         session.player = player
@@ -51,7 +49,7 @@ class SessionStorage {
      * Store a player's session.
      */
     fun storePlayerSession(session: StoredSession) {
-        val section = config.getConfigurationSection("${session.course.id}.${session.player.uniqueId.toString()}")!!
+        val section = config.getConfigurationSection("${session.course.id}.${session.player.uniqueId}")!!
         section.set("time", session.time)
     }
 

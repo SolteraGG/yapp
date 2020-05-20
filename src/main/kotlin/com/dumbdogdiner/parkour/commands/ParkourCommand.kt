@@ -4,12 +4,10 @@ import com.dumbdogdiner.parkour.ParkourPlugin
 import com.dumbdogdiner.parkour.courses.Course
 import com.dumbdogdiner.parkour.players.EditingSession
 import com.dumbdogdiner.parkour.utils.Language
-import com.dumbdogdiner.parkour.utils.Utils
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
 import org.bukkit.entity.Player
-import kotlin.reflect.typeOf
 
 class ParkourCommand : TabExecutor {
     private val plugin = ParkourPlugin.instance
@@ -52,9 +50,8 @@ class ParkourCommand : TabExecutor {
         }
     }
 
-
     private fun list(sender: CommandSender) {
-        sender.sendMessage(Language.listCount.replace("%COUNT%", plugin.courseManager.getCourses().size.toString(), true));
+        sender.sendMessage(Language.listCount.replace("%COUNT%", plugin.courseManager.getCourses().size.toString(), true))
         // var messages = plugin.courseManager.getCourses().map { it -> String.format("")}
     }
 

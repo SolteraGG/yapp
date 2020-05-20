@@ -2,10 +2,13 @@ package com.dumbdogdiner.parkour
 
 import com.dumbdogdiner.parkour.commands.ParkourCommand
 import com.dumbdogdiner.parkour.courses.CourseManager
+import com.dumbdogdiner.parkour.listeners.PlayerDropItemListener
 import com.dumbdogdiner.parkour.listeners.PlayerInteractListener
+import com.dumbdogdiner.parkour.listeners.PlayerQuitListener
 import com.dumbdogdiner.parkour.players.SessionManager
-import org.bukkit.plugin.java.JavaPlugin
 import com.dumbdogdiner.parkour.utils.Configuration
+import com.dumbdogdiner.parkour.utils.Utils
+import org.bukkit.plugin.java.JavaPlugin
 
 class ParkourPlugin : JavaPlugin() {
 
@@ -18,15 +21,18 @@ class ParkourPlugin : JavaPlugin() {
     }
 
     override fun onEnable() {
-        courseManager = CourseManager(this)
-        sessionManager = SessionManager(this)
+        courseManager = CourseManager()
+        sessionManager = SessionManager()
 
-        server.pluginManager.registerEvents(PlayerInteractListener(this), this)
-		
-		// Register PAPI expansion if available.
-		if (server.pluginManager.getPlugin("PlaceholderAPI") != null) {
-			PapiExpansion(this).register()
-		}
+        server.pluginManager.registerEvents(PlayerInteractListener(), this)
+        server.pluginManager.registerEvents(PlayerDropItemListener(), this)
+        server.pluginManager.registerEvents(PlayerQuitListener(), this)
+
+        // Register PAPI expansion if available.
+        if (server.pluginManager.getPlugin("PlaceholderAPI") != null) {
+            logger.info("Attached PlaceholderAPI extension.")
+            PapiExpansion().register()
+        }
 
         val parkourCommand = getCommand("parkour")!!
         parkourCommand.setExecutor(ParkourCommand())

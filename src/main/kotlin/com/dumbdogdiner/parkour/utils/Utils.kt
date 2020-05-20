@@ -15,7 +15,7 @@ object Utils {
      * Convert a short coords back into a location
      */
     fun makeLocation(coords: String): Location {
-        val parsed = coords.split(":").map { x -> x.toDouble()}
+        val parsed = coords.split(":").map { x -> x.toDouble() }
         return Location(Bukkit.getServer().getWorld("world"), parsed[0] - 0.5, parsed[1] - 0.5, parsed[2] - 0.5)
     }
 
@@ -35,7 +35,6 @@ object Utils {
     }
 
     fun colorize(string: String) = ChatColor.translateAlternateColorCodes('&', string)
-
 
     private val server: Server
         get() {
