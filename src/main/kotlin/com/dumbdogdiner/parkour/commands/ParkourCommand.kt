@@ -2,7 +2,7 @@ package com.dumbdogdiner.parkour.commands
 
 import com.dumbdogdiner.parkour.ParkourPlugin
 import com.dumbdogdiner.parkour.courses.Course
-import com.dumbdogdiner.parkour.players.EditingSession
+import com.dumbdogdiner.parkour.editor.EditingSession
 import com.dumbdogdiner.parkour.utils.Language
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -45,9 +45,11 @@ class ParkourCommand : TabExecutor {
 
         return when {
             args.size < 2 -> mutableListOf("list", "edit", "create", "delete")
-            args.size == 2 -> mutableListOf()
+            args[1] == "edit" -> MutableList(plugin.courseManager.getCourses().size) { i -> (i + 1).toString() }
+            args[1] == "list" -> MutableList(plugin.courseManager.getCourses().size) { i -> (i + 1).toString() }
+            args[1] == "delete" -> MutableList(plugin.courseManager.getCourses().size) { i -> (i + 1).toString() }
             else -> mutableListOf()
-        }
+    }
     }
 
     private fun list(sender: CommandSender) {
@@ -61,11 +63,10 @@ class ParkourCommand : TabExecutor {
             return
         }
 
-        //
-        var course = Course(plugin.courseManager)
-        course.id = plugin.courseManager.getCourses().size
+        // Create a new course - don't add to course list yet!
+        val course = Course()
 
-        plugin.sessionManager.createEditingSession(sender, course, EditingSession.Type.CREATE)
+        plugin.editingSessionManager.createEditingSession(sender, course, EditingSession.Type.CREATE)
     }
 
     private fun delete(sender: CommandSender, args: Array<out String>) {

@@ -1,4 +1,4 @@
-package com.dumbdogdiner.parkour.players
+package com.dumbdogdiner.parkour.editor
 
 import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.courses.Course
@@ -15,10 +15,10 @@ import org.bukkit.inventory.ItemStack
 
 /**
  * A player's editing session.
- *
- * TODO: Check for bad people trying to create parkours across multiple worlds >:C
  */
-class EditingSession(private val player: Player, private val course: Course, private val type: Type) : Base {
+class EditingSession(val player: Player, val course: Course, private val type: Type) : Base {
+    private val editorTool = createItemTool()
+
     enum class Type {
         CREATE,
         DELETE,
@@ -26,8 +26,7 @@ class EditingSession(private val player: Player, private val course: Course, pri
     }
 
     init {
-        player.inventory.addItem(createItemTool())
-
+        player.inventory.addItem(editorTool.clone())
         player.sendMessage(Language.createEditingSession)
         SoundUtils.info(player)
     }
@@ -35,18 +34,22 @@ class EditingSession(private val player: Player, private val course: Course, pri
     /**
      * End this editing session.
      */
-    fun end() {
-        val editorTool = createItemTool()
-
-        val tool = player.inventory.find { itemStack -> itemStack == editorTool  }
+    fun end(dropProgress: Boolean) {
+        val tool = player.inventory.find { itemStack -> itemStack == editorTool.clone()  }
         if (tool != null) {
             player.inventory.remove(tool)
         }
 
-        course.save()
+        if (!dropProgress) {
+            if (type == Type.CREATE) {
+                courseManager.addCourse(course)
+            } else {
+                courseManager.updateCourse(course)
+            }
 
-        player.sendMessage(Language.courseSaved)
-        SoundUtils.success(player)
+            player.sendMessage(Language.courseSaved)
+            SoundUtils.success(player)
+        }
     }
 
     /**
@@ -56,7 +59,7 @@ class EditingSession(private val player: Player, private val course: Course, pri
         val item = e.item ?: return
         val block = e.clickedBlock ?: return
 
-        if (item != createItemTool()) {
+        if (item != editorTool.clone()) {
             return
         }
 
@@ -119,24 +122,22 @@ class EditingSession(private val player: Player, private val course: Course, pri
      * editor will drop the current progress and inform the user it is doing such.
      */
     fun handleDropEvent(e: PlayerDropItemEvent) {
-        val editorTool = createItemTool()
-
         if (
             e.itemDrop.itemStack != editorTool
         ) {
             return
         }
 
-        var discard = false
+        var dropProgress = false
 
         // If there isn't a start and an endpoint, discard progress.
         if (course.getCheckpoints().size < 2) {
             player.sendMessage(Language.badLength)
             SoundUtils.error(player)
-            discard = true
+            dropProgress = true
         }
 
-        plugin.sessionManager.endEditingSession(player, discard)
+        editingSessionManager.endEditingSession(this, dropProgress)
         e.itemDrop.remove()
     }
 
@@ -152,7 +153,7 @@ class EditingSession(private val player: Player, private val course: Course, pri
             meta.setDisplayName(Utils.colorize("&r&6&lCourse Editor"))
             meta.lore = mutableListOf("A magical glowing stick! oWO!!", "Use this to create parkour courses, or return them unto the void.")
 
-            editorTool.addUnsafeEnchantment(Enchantment.LOYALTY, 1)
+            editorTool.addUnsafeEnchantment(Enchantment.DURABILITY, 1)
             editorTool.itemMeta = meta
 
             return editorTool

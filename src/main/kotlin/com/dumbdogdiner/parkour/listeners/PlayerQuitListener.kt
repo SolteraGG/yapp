@@ -11,8 +11,8 @@ class PlayerQuitListener : Listener, Base {
     fun onJoin(e: PlayerQuitEvent) {
         if (plugin.sessionManager.isPlayerInSession(e.player)) {
             plugin.sessionManager.endSession(e.player, false)
-        } else if (plugin.sessionManager.isPlayerInEditingSession((e.player))) {
-            plugin.sessionManager.endEditingSession(e.player)
+        } else if (plugin.editingSessionManager.isPlayerInEditingSession((e.player))) {
+            plugin.editingSessionManager.endEditingSession(e.player)
         }
     }
 }

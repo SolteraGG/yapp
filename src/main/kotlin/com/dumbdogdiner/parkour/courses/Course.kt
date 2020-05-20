@@ -1,8 +1,9 @@
 package com.dumbdogdiner.parkour.courses
 
+import com.dumbdogdiner.parkour.Base
 import org.bukkit.Location
 
-class Course(private val manager: CourseManager) {
+class Course : Base {
 
     var id = -1
     var name = ""
@@ -11,19 +12,18 @@ class Course(private val manager: CourseManager) {
     // Object accesses are quicker than lists?
     private val checkpoints = mutableListOf<Location>()
 
+    /**
+     * Add a checkpoint to this course.
+     */
     fun addCheckpoint(loc: Location) {
         checkpoints.add(loc)
-        save()
     }
 
     /**
      * Remove a checkpoint given its index.
      */
     fun removeCheckpoint(index: Int): Location {
-        val checkpoint = checkpoints.removeAt(index)
-
-        save()
-        return checkpoint
+        return checkpoints.removeAt(index)
     }
 
     /**
@@ -32,8 +32,6 @@ class Course(private val manager: CourseManager) {
     fun removeCheckpoint(loc: Location): Boolean {
         val checkpoint = findCheckpoint(loc) ?: return false
         checkpoints.remove(checkpoint)
-
-        save()
         return false
     }
 
@@ -49,12 +47,5 @@ class Course(private val manager: CourseManager) {
      */
     fun getCheckpoints(): MutableList<Location> {
         return checkpoints
-    }
-
-    /**
-     * Save this course to storage.
-     */
-    fun save() {
-        manager.storage.saveCourse(this)
     }
 }

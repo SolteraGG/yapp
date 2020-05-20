@@ -1,4 +1,4 @@
-package com.dumbdogdiner.parkour.players
+package com.dumbdogdiner.parkour.session
 
 import com.dumbdogdiner.parkour.courses.Course
 import org.bukkit.OfflinePlayer

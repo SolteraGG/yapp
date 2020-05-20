@@ -1,7 +1,6 @@
-package com.dumbdogdiner.parkour.players
+package com.dumbdogdiner.parkour.session
 
 import com.dumbdogdiner.parkour.Base
-import com.dumbdogdiner.parkour.ParkourPlugin
 import com.dumbdogdiner.parkour.courses.Course
 import java.io.File
 import java.io.IOException

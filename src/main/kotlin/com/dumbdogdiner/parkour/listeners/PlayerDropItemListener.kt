@@ -7,17 +7,15 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerDropItemEvent
 
 /**
- * Prevent players from dropping the tools.
- *
- * TODO: Finish editing session on drop editor tool.
+ * Prevent players from dropping editor tools, or session controls.
  */
-class PlayerDropItemListener() : Listener, Base {
+class PlayerDropItemListener : Listener, Base {
     @EventHandler
     fun onPlayerItemDrop(e: PlayerDropItemEvent) {
-        if (plugin.sessionManager.isPlayerInSession(e.player)) {
-            plugin.sessionManager.getSession(e.player)?.handleDropEvent(e)
-        } else if (plugin.sessionManager.isPlayerInEditingSession(e.player)) {
-            plugin.sessionManager.getEditingSession(e.player)?.handleDropEvent(e)
+        if (sessionManager.isPlayerInSession(e.player)) {
+            sessionManager.getSession(e.player)?.handleDropEvent(e)
+        } else if (editingSessionManager.isPlayerInEditingSession(e.player)) {
+            editingSessionManager.getEditingSession(e.player)?.handleDropEvent(e)
         }
     }
 }

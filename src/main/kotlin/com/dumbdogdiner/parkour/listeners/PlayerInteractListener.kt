@@ -56,12 +56,15 @@ class PlayerInteractListener() : Listener, Base {
         val block = e.clickedBlock
         if (e.action != Action.RIGHT_CLICK_BLOCK || block == null) { return false }
 
-        val session = plugin.sessionManager.getEditingSession(e.player) ?: return false
+        val session = editingSessionManager.getEditingSession(e.player) ?: return false
 
         session.handleCheckpointClicked(e)
         return true
     }
 
+    /**
+     * Handle a player clicking with the parkour controls.
+     */
     private fun handleClickWithControls(e: PlayerInteractEvent): Boolean {
         if (e.action != Action.RIGHT_CLICK_BLOCK || e.action != Action.RIGHT_CLICK_AIR || !e.hasItem()) {
             return false

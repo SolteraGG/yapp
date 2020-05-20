@@ -1,14 +1,21 @@
 package com.dumbdogdiner.parkour.courses
 
+import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.ParkourPlugin
+
 import java.io.File
 import java.io.IOException
+
 import org.bukkit.Location
 import org.bukkit.configuration.InvalidConfigurationException
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 
-class CourseStorage(private val manager: CourseManager) {
+/**
+ * Wrapper class for storing course data.
+ * TODO: Use serialized locations to prevent world issues.
+ */
+class CourseStorage : Base {
     private val file: File
     private val config: FileConfiguration
 
@@ -39,7 +46,7 @@ class CourseStorage(private val manager: CourseManager) {
         val courses = mutableListOf<Course>()
 
         for (key in config.getKeys(false)) {
-            val course = Course(manager)
+            val course = Course()
 
             course.id = key.toInt()
             config.getConfigurationSection(key)?.getString("name")?.let { course.name = it }
@@ -65,13 +72,15 @@ class CourseStorage(private val manager: CourseManager) {
      * Save the provided courses to disk.
      */
     fun saveCourses(courses: MutableList<Course>) {
-        courses.forEach { saveCourse(it) }
+        courses.forEach { saveCourse(it, true) }
+        config.save(file)
+        logger.info("Saved ${courses.size} to disk.")
     }
 
     /**
      * Save a course to disk.
      */
-    fun saveCourse(course: Course) {
+    fun saveCourse(course: Course, skipSave: Boolean = false) {
         var section = config.getConfigurationSection(course.id.toString())
 
         if (section == null) {
@@ -81,6 +90,12 @@ class CourseStorage(private val manager: CourseManager) {
         section.set("name", course.name)
         section.set("description", course.description)
         section.set("checkpoints", course.getCheckpoints())
+
+        if (skipSave) {
+            return
+        }
+        config.save(file)
+        logger.info("Saved course ID: ${course.id} to disk.")
     }
 
     /**
@@ -88,5 +103,6 @@ class CourseStorage(private val manager: CourseManager) {
      */
     fun removeCourse(course: Course) {
         config.set(course.id.toString(), null)
+        logger.info("Deleted course ID: ${course.id} from disk.")
     }
 }

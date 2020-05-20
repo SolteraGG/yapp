@@ -1,15 +1,17 @@
 package com.dumbdogdiner.parkour.structures
 
 import com.dumbdogdiner.parkour.Base
-import com.dumbdogdiner.parkour.players.EditingSession
-import com.okkero.skedule.BukkitDispatcher
+
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.entity.Player
+
+import com.okkero.skedule.BukkitDispatcher
 
 /**
  * Represents a pressure plate that the player can step on, causing something interesting to happen owo~
@@ -33,7 +35,7 @@ abstract class Pad(private val location: Location, private val particle: Particl
     /**
      * Called when a player enters the course containing this pad.
      */
-    fun init(player: Player, firstPlayer:  Boolean) {
+    fun init(player: Player, firstPlayer: Boolean) {
         if (firstPlayer) {
             startParticles()
         }
@@ -50,6 +52,7 @@ abstract class Pad(private val location: Location, private val particle: Particl
 
     /**
      * Spawns a coroutine that repeatedly creates particles above the pad.
+     * TODO: Add config option to disable particles.
      */
     private fun startParticles() {
         isActive = true
