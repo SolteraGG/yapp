@@ -1,7 +1,10 @@
 package com.dumbdogdiner.parkour.session
 
+import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.courses.Course
 import com.dumbdogdiner.parkour.utils.Language
+import com.dumbdogdiner.parkour.utils.SoundUtils
+import com.dumbdogdiner.parkour.utils.TimerUtils
 import com.dumbdogdiner.parkour.utils.Utils
 
 import org.bukkit.Material
@@ -9,7 +12,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
-class Session(private val manager: SessionManager, private val player: Player, private val course: Course) {
+class Session(val player: Player, val course: Course) : Base {
     private var previousCheckpointId = 0
     private var nextCheckpointId = 1
 
@@ -19,12 +22,16 @@ class Session(private val manager: SessionManager, private val player: Player, p
     private val nextCheckpoint
         get() = course.getCheckpoints()[nextCheckpointId]
 
-    private val startedAt = System.currentTimeMillis()
+    private val timer = TimerUtils.createTimer(player)
 
     init {
+        /* TODO: Properly implement this.
         player.inventory.addItem(returnItem.clone())
         player.inventory.addItem(resetItem.clone())
         player.inventory.addItem(exitItem.clone())
+        */
+        player.sendMessage(Language.startCourse.replace("%COURSE%", course.name, ignoreCase = true))
+        SoundUtils.info(player)
     }
 
     /**
@@ -34,39 +41,36 @@ class Session(private val manager: SessionManager, private val player: Player, p
         previousCheckpointId++
         nextCheckpointId++
 
+        // If last checkpoint, end session.
         if (nextCheckpointId == course.getCheckpoints().size) {
-            finish()
+            return sessionManager.endSession(this, false)
         }
+
+        player.sendMessage(Language.nextCheckpoint)
+        SoundUtils.boop(player)
     }
 
+    /**
+     * Revert the player back to the last checkpoint.
+     */
     fun revertToLastCheckpoint() {
-        player.teleport(previousCheckpoint)
+        player.teleport(previousCheckpoint.clone().setDirection(player.location.direction))
     }
 
-    fun end(returnToStart: Boolean) {
+    /**
+     *
+     */
+    fun end(returnToStart: Boolean): Long {
         if (returnToStart) {
-            player.teleport(course.getCheckpoints().first())
+            player.teleport(course.getCheckpoints().first().clone().setDirection(player.location.direction))
         }
-
+        /* TODO: Properly implement this.
         player.inventory.remove(returnItem)
         player.inventory.remove(resetItem)
         player.inventory.remove(exitItem)
-    }
+        */
 
-    private fun finish() {
-        end(true)
-
-        val session = StoredSession()
-        session.course = course
-        session.player = player
-        session.time = ((System.currentTimeMillis() - startedAt) / 1000).toDouble()
-
-        val previous = manager.storage.getPlayerBest(player, course)
-
-        if (previous < session.time) {
-            player.sendMessage(Language.newBestTime)
-            manager.storage.storePlayerSession(session)
-        }
+        return timer.stop()
     }
 
     /**
@@ -74,6 +78,13 @@ class Session(private val manager: SessionManager, private val player: Player, p
      */
     fun handleCheckpoint(e: PlayerInteractEvent) {
         val block = e.clickedBlock ?: return
+
+        if (course.getCheckpoints().first() == block.location) {
+            player.sendMessage(Language.startCourse)
+            SoundUtils.info(player)
+            timer.reset()
+            return
+        }
 
         if (nextCheckpoint != block.location) {
             return

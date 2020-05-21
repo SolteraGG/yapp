@@ -38,8 +38,8 @@ object Utils {
             return Bukkit.getServer()
         }
 
-    private const val consolePrefix = "&d[Parkour] &r"
-    private const val errorPrefix = "&e[Parkour Error] &r"
+    private const val consolePrefix = "&dPawkour &r&8» &r"
+    private const val errorPrefix = "&dPawkour &eERROR &r&8» &r"
 
     fun log(message: String) = server.consoleSender.sendMessage(colorize("$consolePrefix$message"))
     fun log(message: Throwable) = server.consoleSender.sendMessage(colorize("$errorPrefix$message"))
@@ -47,9 +47,20 @@ object Utils {
     /**
      * Utility function for creating item stacks with metadata.
      */
-     fun createItemStack(mat: Material, meta: (m: ItemMeta) -> ItemMeta): ItemStack {
+    fun createItemStack(mat: Material, meta: (m: ItemMeta) -> ItemMeta): ItemStack {
         val item = ItemStack(mat)
         item.itemMeta = meta(item.itemMeta)
         return item
+    }
+
+    /**
+     * Round a double to n decimal places.
+     */
+    fun round(v: Double, n: Int): Double {
+        var multiplier = 1.0
+        repeat(n) {
+            multiplier *= 10
+        }
+        return kotlin.math.round(v * multiplier) / multiplier
     }
 }

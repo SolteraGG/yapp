@@ -2,6 +2,7 @@ package com.dumbdogdiner.parkour.courses
 
 import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.ParkourPlugin
+import com.dumbdogdiner.parkour.utils.Utils
 import org.bukkit.Bukkit
 
 import java.io.File
@@ -85,7 +86,7 @@ class CourseStorage : Base {
     fun saveCourses(courses: MutableList<Course>) {
         courses.forEach { saveCourse(it, true) }
         config.save(file)
-        logger.info("Saved ${courses.size} courses to disk.")
+        Utils.log("Saved ${courses.size} courses to disk.")
     }
 
     /**
@@ -106,7 +107,7 @@ class CourseStorage : Base {
             return
         }
         config.save(file)
-        logger.info("Saved course '${course.id}' to disk.")
+        Utils.log("Saved course '${course.id}' to disk.")
     }
 
     /**
@@ -114,7 +115,7 @@ class CourseStorage : Base {
      */
     fun removeCourse(course: Course) {
         config.set(course.id.toString(), null)
-        logger.info("Deleted course '${course.id}' from disk.")
+        Utils.log("Deleted course '${course.id}' from disk.")
     }
 
     companion object : Base {

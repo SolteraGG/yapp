@@ -71,6 +71,12 @@ spigot {
             usage = "/parkour [list/create/modify/delete]"
         }
     }
+    permissions {
+        'parkour.command' {
+            description = 'Allows players to create, edit, and delete courses'
+            defaults = 'op'
+        }
+    }
 }
 
 // Bugfix for no referenced libraries when using Eclipse.

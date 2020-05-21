@@ -6,6 +6,7 @@ import com.dumbdogdiner.parkour.editor.EditingSessionManager
 import com.dumbdogdiner.parkour.listeners.*
 import com.dumbdogdiner.parkour.session.SessionManager
 import com.dumbdogdiner.parkour.utils.Configuration
+import com.dumbdogdiner.parkour.utils.Utils
 
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -33,7 +34,7 @@ class ParkourPlugin : JavaPlugin() {
 
         // Register PAPI expansion if available.
         if (server.pluginManager.getPlugin("PlaceholderAPI") != null) {
-            logger.info("Attached PlaceholderAPI extension.")
+            Utils.log("Attached PlaceholderAPI extension.")
             PapiExpansion().register()
         }
 

@@ -25,18 +25,32 @@ object Language {
     // Session linguistics
     val newBestTime
         get() = "$prefix${get("$path.newBestTime")}"
+    val startCourse
+        get() = "$prefix${get("$path.startCourse")}"
+    val finishCourse
+        get() = "$prefix${get("$path.finishCourse")}"
+    val nextCheckpoint
+        get() = "$prefix${get("$path.nextCheckpoint")}"
+    val newRecord
+        get() = "$prefix${get("$path.newRecord")}"
+    val exitSession
+        get() = "$prefix${get("$path.exitSession")}"
 
     // Command-specific
     val listCount
         get() = "$prefix${get("$path.listCount")}"
     val courseDeleted
         get() = "$prefix${get("$path.courseDeleted")}"
+    val noSession
+        get() = "$prefix${get("$path.noSession")}"
 
     // Editing linguistics
     val createEditingSession
         get() = "$prefix${get("$path.createEditingSession")}"
     val courseNotFound
         get() = "$prefix${get("$path.courseNotFound")}"
+    val courseExists
+        get() = "$prefix${get("$path.courseExists")}"
     val checkpointNotFound
         get() = "$prefix${get("$path.checkpointNotFound")}"
     val checkpointExists

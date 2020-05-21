@@ -1,8 +1,14 @@
 package com.dumbdogdiner.parkour
 
-import me.clip.placeholderapi.expansion.PlaceholderExpansion
+import com.dumbdogdiner.parkour.utils.Utils
+
 import org.bukkit.entity.Player
 
+import me.clip.placeholderapi.expansion.PlaceholderExpansion
+
+/**
+ * PlaceholderAPI Expansion class
+ */
 class PapiExpansion : PlaceholderExpansion(), Base {
 
     override fun persist(): Boolean {
@@ -26,69 +32,54 @@ class PapiExpansion : PlaceholderExpansion(), Base {
     }
 
     override fun onPlaceholderRequest(player: Player, identifier: String): String? {
-        // Get the list of courses.
-        val courses = plugin.courseManager.getCourses()
-
         if (identifier.startsWith("course_")) {
-            // Strip out the 'course' prefix of the identifier.
-            val subIdentifier = identifier.substringAfter(identifier.substringBefore("_") + "_")
+            val args = identifier.split("_")
+            val name = args[1]
 
-            val courseId = (subIdentifier.substringBefore("_")).toIntOrNull()
-
-            val option = subIdentifier.substringAfter(String.format("%s_", courseId))
-
-            // ---- DEBUG STATEMENTS START -----
-            logger.info("SUBID: " + subIdentifier)
-            logger.info("COURSEID: " + courseId)
-            logger.info("OPTION FORMAT: " + String.format("%s_", courseId))
-            logger.info("OPTION: " + option)
-            // ----- DEBUG STATEMENTS END -----
-
-            if (courseId == null) {
-                logger.warning("[PlaceholderAPI Request] Invalid syntax! (" + identifier + ")")
-                return "Invalid syntax"
+            // Check course exists
+            val course = courseManager.getCourses().find { it.name == name }
+            if (course == null) {
+                Utils.log("[PlaceholderAPI] Unknown course '$name'.")
+                return "UNKNOWN"
             }
 
-            // Make sure the course exists before requesting it.
-            if (courses.size != (courseId + 1)) {
-                logger.warning("[PlaceholderAPI Request] course #" + courseId + " does not exist!")
-                return "Course does not exist!"
+            if (args.size < 3) {
+                Utils.log("[PlaceholderAPI] Unknown placeholder command '$identifier'.")
+                return "INVALID"
             }
 
-            val course = courses[courseId]
-
-            // Total Checkpoints
-            if (option == "total_checkpoints") {
-                return course.getCheckpoints().size.toString()
-            }
-
-            // Top 10 Times
-            if (option.startsWith("times_top_")) {
-                val topNo = (option.split("times_top_")[1]).toIntOrNull()
-
-                // Make sure that the top number is a valid number
-                if (topNo == null) {
-                    logger.warning("[PlaceholderAPI Request] Top 10: Invalid syntax! ($identifier)")
-                    return "Invalid syntax!"
-
-                    // It is a valid number, now make sure it is between one and 10.
-                } else if (topNo == 0 || topNo > 10) {
-                    logger.warning("[PlaceholderAPI Request] Top 10: Only positions 1-10 are supported!")
-                    return "Invalid position!"
+            return when(val cmd = args.subList(2, args.size).joinToString(separator = "_")) {
+                "checkpoint_count" -> {
+                    course.getCheckpoints().size.toString()
                 }
-
-                // STUB : Not implemented.
-                return "Not Implemented! - Position $topNo"
+                "personal_best" -> {
+                    val attempt = sessionManager.storage.getPlayerBest(player, course)
+                    if (attempt == -1.0) {
+                       return "Not Attempted"
+                    }
+                    return attempt.toString()
+                }
+                /* TODO: Fix these
+                "record_3" -> {
+                    val attempt = sessionManager.storage.fetchNthTime(course, 2) ?: return "Not Attempted"
+                    return attempt.toString()
+                }
+                "record_2" -> {
+                    val attempt = sessionManager.storage.fetchNthTime(course, 1) ?: return "Not Attempted"
+                    return attempt.toString()
+                }
+                 */
+                "record" -> {
+                    "${sessionManager.storage.fetchRecord(course)}"
+                }
+                else -> {
+                    Utils.log("[PlaceholderAPI] Unknown placeholder command '$cmd'.")
+                    "INVALID"
+                }
             }
         }
 
-        return when (identifier) {
-            // %parkour_test%
-            "test" -> "Hello"
-
-            // %parkour_total_courses%
-            "total_courses" -> courses.size.toString()
-            else -> null
-        }
+        Utils.log("[PlaceholderAPI] Unknown placeholder command '$identifier'.")
+        return "INVALID"
     }
 }

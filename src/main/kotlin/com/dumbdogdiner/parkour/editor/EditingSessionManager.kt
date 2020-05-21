@@ -2,6 +2,9 @@ package com.dumbdogdiner.parkour.editor
 
 import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.courses.Course
+import com.dumbdogdiner.parkour.utils.Language
+import com.dumbdogdiner.parkour.utils.SoundUtils
+import com.dumbdogdiner.parkour.utils.Utils
 import org.bukkit.entity.Player
 
 class EditingSessionManager : Base {
@@ -19,13 +22,13 @@ class EditingSessionManager : Base {
         }
 
         if (sessionManager.isPlayerInSession(player)) {
-            sessionManager.endSession(player, false)
+            sessionManager.endSession(player, returnToStart = false, escapeRecord = true)
         }
 
         val editingSession = EditingSession(player, course, type)
         editingSessions[player] = editingSession
 
-        logger.info("Created editing session for player '${player.uniqueId}'.")
+        Utils.log("Created editing session for player '${player.uniqueId}'.")
         return editingSession
     }
 
@@ -48,14 +51,19 @@ class EditingSessionManager : Base {
      * End a editor session.
      */
     fun endEditingSession(session: EditingSession, dropProgress: Boolean = false) {
-        val course = session.end(dropProgress)
+        val course = session.end()
         editingSessions.remove(session.player)
 
         if (!dropProgress) {
             plugin.courseManager.addCourse(course)
+            session.player.sendMessage(Language.courseSaved)
+            SoundUtils.success(session.player)
+        } else {
+            session.player.sendMessage(Language.exitSession)
+            SoundUtils.error(session.player)
         }
 
-        logger.info("Ended editing session for player '${session.player.uniqueId}'.")
+        Utils.log("Ended editing session for player '${session.player.uniqueId}'.")
     }
 
     /**

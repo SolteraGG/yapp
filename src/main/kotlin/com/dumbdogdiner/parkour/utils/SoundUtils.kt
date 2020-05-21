@@ -7,6 +7,9 @@ import kotlinx.coroutines.*
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 
+/**
+ * Utility methods for sending adorable fox notification sounds omg this was such a good idea i can't~
+ */
 object SoundUtils : Base {
     /**
      * Success sound.
@@ -31,6 +34,17 @@ object SoundUtils : Base {
     }
 
     /**
+     * Quieter, less important notification sound.
+     */
+    fun boop(player: Player) {
+        GlobalScope.launch(BukkitDispatcher(plugin)) {
+            playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, 1.5f)
+            delay(500)
+            playSound(player, Sound.ENTITY_FOX_SLEEP)
+        }
+    }
+
+    /**
      * Error sound.
      */
     fun error(player: Player) {
@@ -38,6 +52,27 @@ object SoundUtils : Base {
             playSound(player, Sound.BLOCK_NOTE_BLOCK_BASS)
             playSound(player, Sound.ENTITY_ITEM_BREAK)
             playSound(player, Sound.ENTITY_FOX_HURT)
+        }
+    }
+
+    /**
+     * Damn boiiii not baddd~
+     */
+    fun awesome(player: Player) {
+        GlobalScope.launch(BukkitDispatcher(plugin)) {
+            playSound(player, Sound.ENTITY_PLAYER_LEVELUP)
+            delay(500)
+            playSound(player, Sound.ENTITY_VILLAGER_CELEBRATE)
+        }
+    }
+
+    /**
+     * OMG WHATTTT
+     */
+    fun OWO(player: Player) {
+        GlobalScope.launch(BukkitDispatcher(plugin)) {
+            playSound(player, Sound.ENTITY_PLAYER_LEVELUP)
+            playSound(player, Sound.ENTITY_WITHER_SPAWN)
         }
     }
 
