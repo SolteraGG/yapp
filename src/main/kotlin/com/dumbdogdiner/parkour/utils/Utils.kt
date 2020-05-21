@@ -1,5 +1,6 @@
 package com.dumbdogdiner.parkour.utils
 
+import com.dumbdogdiner.parkour.courses.CourseStorage
 import org.bukkit.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
@@ -63,4 +64,33 @@ object Utils {
         }
         return kotlin.math.round(v * multiplier) / multiplier
     }
+
+    /**
+     * Serialize a location into  astring.
+     */
+    fun serializeLocation(loc: Location): String {
+        return "${loc.world.name}:${loc.x}:${loc.y}:${loc.z}"
+    }
+
+    /**
+     * Deserialize a string into a location.
+     */
+    fun deserializeLocation(raw: String): Location? {
+        val delimited = raw.split(":")
+
+        if (delimited.size != 4) {
+            log("Failed to deserilize location '$raw' - invalid length.")
+            return null
+        }
+
+        val world = Bukkit.getWorld(delimited[0])
+        if (world == null) {
+           log("Failed to deserilize location '$raw' - world '${delimited[0]}' does not exist.")
+            return null
+        }
+
+        return Location(world, delimited[1].toDouble(), delimited[2].toDouble(), delimited[3].toDouble())
+    }
+
 }
+

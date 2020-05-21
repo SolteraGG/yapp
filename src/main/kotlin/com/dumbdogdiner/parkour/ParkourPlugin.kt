@@ -28,8 +28,11 @@ class ParkourPlugin : JavaPlugin() {
 
         // events events events
         server.pluginManager.registerEvents(PlayerSessionListener(), this)
+        server.pluginManager.registerEvents(PlayerEditorSessionListener(), this)
+
         server.pluginManager.registerEvents(PlayerMiscListener(), this)
         server.pluginManager.registerEvents(PlayerQuitListener(), this)
+
         server.pluginManager.registerEvents(WorldListener(), this)
 
         // Register PAPI expansion if available.

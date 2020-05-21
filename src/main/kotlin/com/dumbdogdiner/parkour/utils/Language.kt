@@ -31,6 +31,8 @@ object Language {
         get() = "$prefix${get("$path.finishCourse")}"
     val nextCheckpoint
         get() = "$prefix${get("$path.nextCheckpoint")}"
+    val restartCourse
+        get() = "$prefix${get("$path.restartCourse")}"
     val newRecord
         get() = "$prefix${get("$path.newRecord")}"
     val exitSession
