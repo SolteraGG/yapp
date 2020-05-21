@@ -1,24 +1,13 @@
 package com.dumbdogdiner.parkour.utils
 
 import org.bukkit.*
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
 
 object Utils {
-    fun makeShortCoords(world: String, x: Int, y: Int, z: Int): String {
-        return String.format("%s:%d:%d:%d", world, x, y, z)
-    }
-
-    fun makeShortCoords(loc: Location): String {
-        return makeShortCoords(loc.world.name, loc.blockX, loc.blockY, loc.blockZ)
-    }
-
     /**
-     * Convert a short coords back into a location
+     * Is this material a pressure plate? I don't know, ask this function!~
      */
-    fun makeLocation(coords: String): Location {
-        val parsed = coords.split(":").map { x -> x.toDouble()}
-        return Location(Bukkit.getServer().getWorld("world"), parsed[0] - 0.5, parsed[1] - 0.5, parsed[2] - 0.5)
-    }
-
     fun isPressurePlate(mat: Material): Boolean {
         return when (mat) {
             Material.ACACIA_PRESSURE_PLATE -> true
@@ -34,17 +23,44 @@ object Utils {
         }
     }
 
+    /**
+     * Convert bukkit colour codes into their true values.
+     */
     fun colorize(string: String) = ChatColor.translateAlternateColorCodes('&', string)
 
+    /**
+     * Convert a list of strings containing bukkit colour codes into their true values.
+     */
+    fun colorize(list: List<String>) = list.map { colorize(it); }
 
     private val server: Server
         get() {
             return Bukkit.getServer()
         }
 
-    private const val consolePrefix = "&d[Parkour] &r"
-    private const val errorPrefix = "&e[Parkour Error] &r"
+    private const val consolePrefix = "&dPawkour &r&8» &r"
+    private const val errorPrefix = "&dPawkour &eERROR &r&8» &r"
 
-    fun log(message: String) = server.consoleSender.sendMessage("$consolePrefix${colorize(message)}")
-    fun log(message: Throwable) = server.consoleSender.sendMessage("$errorPrefix$message")
+    fun log(message: String) = server.consoleSender.sendMessage(colorize("$consolePrefix$message"))
+    fun log(message: Throwable) = server.consoleSender.sendMessage(colorize("$errorPrefix$message"))
+
+    /**
+     * Utility function for creating item stacks with metadata.
+     */
+    fun createItemStack(mat: Material, meta: (m: ItemMeta) -> ItemMeta): ItemStack {
+        val item = ItemStack(mat)
+        item.itemMeta = meta(item.itemMeta)
+        return item
+    }
+
+    /**
+     * Round a double to n decimal places.
+     */
+    fun round(v: Double, n: Int): Double {
+        var multiplier = 1.0
+        repeat(n) {
+            multiplier *= 10
+        }
+        return kotlin.math.round(v * multiplier) / multiplier
+    }
 }

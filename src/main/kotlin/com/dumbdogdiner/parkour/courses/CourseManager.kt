@@ -1,34 +1,64 @@
 package com.dumbdogdiner.parkour.courses
 
-import com.dumbdogdiner.parkour.ParkourPlugin
-import com.dumbdogdiner.parkour.utils.Configuration
+import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.utils.Utils
+import com.okkero.skedule.schedule
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 import org.bukkit.Location
 
-class CourseManager(private val plugin: ParkourPlugin) {
-    private var courses = HashMap<String, Course>()
+class CourseManager : Base {
+    private val courses = HashMap<String, Course>()
+    private val storage = CourseStorage()
 
     init {
-        Configuration.getCourses().forEach { course -> addCourse(course) }
-        Utils.log("Loaded ${courses.size} courses from configuration.")
+        // Schedule course loading one tick after worlds are loaded.
+        plugin.schedule {
+            waitFor(1)
+            storage.fetchCourses().forEach { addCourse(it, true) }
+            Utils.log("Loaded ${courses.size} courses from configuration.")
+        }
     }
 
     /**
      * Add a course.
      */
-    fun addCourse(course: Course) {
-        courses[Utils.makeShortCoords(course.getOrderedCheckpoints()[0])]
+    fun addCourse(course: Course, preventSave: Boolean = false) {
+        courses[course.id.toString()] = course
+        if (preventSave) {
+            return
+        }
+        storage.saveCourse(course)
     }
 
-    fun getCourse(k: String): Course? {
-        return courses[k]
+    /**
+     * Remove a course.
+     */
+    fun removeCourse(course: Course) {
+        courses.remove(course.id.toString())
+        storage.removeCourse(course)
     }
 
-    fun getCourse(loc: Location): Course? {
-        return courses[Utils.makeShortCoords(loc)]
+    /**
+     * Find a course who's first checkpoint is at the given location.
+     */
+    fun findCourseFromStart(location: Location): Course? {
+        return courses.values.find { it.getCheckpoints()[0] == location }
     }
 
+    /**
+     * Fetch all loaded courses.
+     */
     fun getCourses(): List<Course> {
         return courses.values.toList()
+    }
+
+    /**
+     * Save all courses currently in memory.
+     */
+    fun saveCourses() {
+        storage.saveCourses(courses.values.toMutableList())
     }
 }

@@ -1,43 +1,55 @@
 package com.dumbdogdiner.parkour.courses
 
-import com.dumbdogdiner.parkour.utils.Utils
+import com.dumbdogdiner.parkour.Base
+import com.dumbdogdiner.parkour.structures.Pad
+
 import org.bukkit.Location
+import java.util.*
 
-class Course() {
+class Course : Base {
+
+    var id: UUID = UUID.randomUUID()
+    var name = ""
+    var description = ""
+
     // Object accesses are quicker than lists?
-    private var checkpoints = HashMap<String, Location>()
-    private var checkpointArray = mutableListOf<Location>()
+    private val checkpoints = mutableListOf<Location>()
+    private val features = mutableListOf<Pad>()
 
+    /**
+     * Add a checkpoint to this course.
+     */
     fun addCheckpoint(loc: Location) {
-        checkpoints[Utils.makeShortCoords(loc)] = loc
-        checkpointArray.add(loc)
+        checkpoints.add(loc)
     }
 
-    fun removeCheckpoint(id: Int) {
-        var checkpoint = checkpointArray.removeAt(id)
-        checkpoints.remove(Utils.makeShortCoords(checkpoint))
+    /**
+     * Remove a checkpoint given its index.
+     */
+    fun removeCheckpoint(index: Int): Location {
+        return checkpoints.removeAt(index)
     }
 
+    /**
+     * Remove a checkpoint at a given location.
+     */
     fun removeCheckpoint(loc: Location): Boolean {
-        val id = getCheckpointId(loc)
-        if (id != null) {
-            removeCheckpoint(id)
-            return true
-        }
+        val checkpoint = findCheckpoint(loc) ?: return false
+        checkpoints.remove(checkpoint)
         return false
     }
 
-    fun getCheckpoints(): HashMap<String, Location> {
+    /**
+     * Find a checkpoint with the given location.
+     */
+    fun findCheckpoint(loc: Location): Location? {
+        return checkpoints.find { it == loc }
+    }
+
+    /**
+     * Return an ordered array of checkpoints.
+     */
+    fun getCheckpoints(): MutableList<Location> {
         return checkpoints
     }
-
-    fun getCheckpointId(loc: Location): Int? {
-        return checkpointArray.indexOf(checkpoints[Utils.makeShortCoords(loc)])
-    }
-
-    fun getOrderedCheckpoints(): MutableList<Location> {
-        return checkpointArray
-    }
-
-    fun save() {}
 }
