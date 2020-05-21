@@ -32,6 +32,7 @@ object Configuration {
         config.addDefault(path + "startCourse", "&bCourse &a'%COURSE%' &bstarted!")
         config.addDefault(path + "finishCourse", "&bYou finished the course &a'%COURSE%' &b- awesome!")
         config.addDefault(path + "nextCheckpoint", "&e&lCheckpoint &r&bpassed!")
+        config.addDefault(path + "restartCourse", "&bTimer restarted!")
         config.addDefault(path + "newRecord", "&d&lRECORD&b - &c%TIME%s &bon &a'%COURSE%' &bby &c%PLAYER%")
         config.addDefault(path + "exitSession", "&bExited the current session.")
 

@@ -24,6 +24,8 @@ class Session(val player: Player, val course: Course) : Base {
 
     private val timer = TimerUtils.createTimer(player)
 
+    private var firstCheckpointSteppedOn = System.currentTimeMillis()
+
     init {
         /* TODO: Properly implement this.
         player.inventory.addItem(returnItem.clone())
@@ -80,7 +82,16 @@ class Session(val player: Player, val course: Course) : Base {
         val block = e.clickedBlock ?: return
 
         if (course.getCheckpoints().first() == block.location) {
-            player.sendMessage(Language.startCourse)
+            // Add a delay to prevent people from spamming the first checkpoint.
+            val steppedOn = firstCheckpointSteppedOn
+            firstCheckpointSteppedOn = System.currentTimeMillis()
+
+            if (System.currentTimeMillis() - steppedOn < 500) {
+                return
+            }
+
+
+            player.sendMessage(Language.restartCourse.replace("%COURSE%", course.name, ignoreCase = true))
             SoundUtils.info(player)
             timer.reset()
             return
