@@ -5,13 +5,25 @@ import com.dumbdogdiner.parkour.courses.Course
 import com.dumbdogdiner.parkour.utils.Language
 import com.dumbdogdiner.parkour.utils.SoundUtils
 import com.dumbdogdiner.parkour.utils.Utils
+import com.okkero.skedule.BukkitDispatcher
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
+import org.bukkit.Location
 
 import org.bukkit.entity.Player
+import org.bukkit.event.block.BlockRedstoneEvent
+import org.bukkit.event.player.PlayerInteractEvent
 
 class SessionManager : Base {
-    private val sessions = HashMap<Player, Session>()
     val storage = SessionStorage()
+
+    private val redstoneUpdates = HashMap<Location, BlockRedstoneEvent>()
+    private val playerInteractions = HashMap<Location, PlayerInteractEvent>()
+
+    private val sessions = HashMap<Player, Session>()
+
 
     /**
      * Create a new player session.
@@ -111,5 +123,74 @@ class SessionManager : Base {
             return true
         }
         return false
+    }
+
+    /**
+     * Handle a player checkpoint interaction.
+     */
+    fun handleCheckpointInteraction(e: PlayerInteractEvent) {
+        val block = e.clickedBlock ?: return
+
+        // If recieved both events, trigger.
+        val redstoneUpdate = redstoneUpdates[block.location]
+        if (redstoneUpdate != null) {
+            return handleCombined(e, redstoneUpdate)
+        }
+
+        playerInteractions[block.location] = e
+
+        // Remove after 1 second to prevent memory leaks
+        GlobalScope.launch(BukkitDispatcher(plugin)) {
+            delay(1000)
+            playerInteractions.remove(block.location)
+        }
+    }
+
+    /**
+     * Handle a pressure plate redstone update.
+     */
+    fun handleCheckpointRedstoneUpdate(e: BlockRedstoneEvent) {
+        // Remove when deactivated to prevent memory leaks
+        if (e.newCurrent == 0) {
+            redstoneUpdates.remove(e.block.location)
+            return
+        }
+
+        // If the signal updates, but has already been recorded, don't do anything.
+        if (redstoneUpdates.contains(e.block.location)) {
+            return
+        }
+
+        // If recieved both events, trigger.
+        val interaction = playerInteractions[e.block.location]
+        if (interaction != null) {
+            return handleCombined(interaction, e)
+        }
+
+        redstoneUpdates[e.block.location] = e
+    }
+
+    /**
+     * When both the redstone update and player interaction have occured.
+     */
+    private fun handleCombined(interaction: PlayerInteractEvent, redstoneUpdate: BlockRedstoneEvent) {
+        val player = interaction.player
+        val block = redstoneUpdate.block
+
+        // Remove from memory.
+        playerInteractions.remove(interaction.clickedBlock?.location)
+        redstoneUpdates.remove(block.location)
+
+        // If the player isn't in a session, and respective block is the first checkpoint
+        val course = courseManager.findCourseFromStart(block.location)
+        if (course != null && !isPlayerInSession(player)) {
+            createSession(player, course)
+            return
+        }
+
+        // If the player is in a session
+        val session = plugin.sessionManager.getSession(player) ?: return
+        Utils.log("Handling checkpoint interaction for '${player.uniqueId}' at ${Utils.serializeLocation(block.location)}")
+        session.handleCheckpoint(interaction)
     }
 }

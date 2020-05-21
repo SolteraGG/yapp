@@ -73,7 +73,7 @@ class CourseStorage : Base {
         val res = mutableListOf<Location>()
 
         for (checkpoint in section.getStringList("checkpoints")) {
-            val loc = deserializeLocation(checkpoint) ?: return null
+            val loc = Utils.deserializeLocation(checkpoint) ?: return null
             res.add(loc)
         }
 
@@ -101,7 +101,7 @@ class CourseStorage : Base {
 
         section.set("name", course.name)
         section.set("description", course.description)
-        section.set("checkpoints", course.getCheckpoints().map { serializeLocation(it) })
+        section.set("checkpoints", course.getCheckpoints().map { Utils.serializeLocation(it) })
 
         if (skipSave) {
             return
@@ -118,25 +118,4 @@ class CourseStorage : Base {
         Utils.log("Deleted course '${course.id}' from disk.")
     }
 
-    companion object : Base {
-        fun serializeLocation(loc: Location): String {
-            return "${loc.world.name}:${loc.x}:${loc.y}:${loc.z}"
-        }
-        fun deserializeLocation(raw: String): Location? {
-            val delimited = raw.split(":")
-
-            if (delimited.size != 4) {
-                logger.warning("Failed to deserilize location '$raw' - invalid length.")
-                return null
-            }
-
-            val world = Bukkit.getWorld(delimited[0])
-            if (world == null) {
-                logger.warning("Failed to deserilize location '$raw' - world '${delimited[0]}' does not exist.")
-                return null
-            }
-
-            return Location(world, delimited[1].toDouble(), delimited[2].toDouble(), delimited[3].toDouble())
-        }
-    }
 }
