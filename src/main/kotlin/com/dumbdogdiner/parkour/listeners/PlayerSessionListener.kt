@@ -10,6 +10,7 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockRedstoneEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerMoveEvent
 
 class PlayerSessionListener : Listener, Base {
     /**
@@ -29,5 +30,16 @@ class PlayerSessionListener : Listener, Base {
     fun onHandleCheckpointRedstoneUpdate(e: BlockRedstoneEvent) {
         if (!Utils.isPressurePlate(e.block.type)) { return }
         sessionManager.handleCheckpointRedstoneUpdate(e)
+    }
+
+    /**
+     * Prevent the player from flying during courses.
+     * TODO: Check if this is drastically slow.
+     */
+    @EventHandler
+    fun onPlayerMove(e: PlayerMoveEvent) {
+        if (sessionManager.isPlayerInSession(e.player)) {
+            sessionManager.endSession(e.player, returnToStart = true, escapeRecord = true)
+        }
     }
 }

@@ -43,7 +43,7 @@ class SessionStorage : Base {
      */
     fun fetchRecordSession(course: Course): StoredSession? {
         val session = StoredSession()
-        val section = config.getConfigurationSection("${course.id}:top") ?: return null
+        val section = config.getConfigurationSection("${course.name}:top") ?: return null
 
         session.time = section.getDouble("time")
         session.player = Bukkit.getOfflinePlayer(UUID.fromString(section.getString("player")))
@@ -57,7 +57,7 @@ class SessionStorage : Base {
      */
     fun fetchPlayerSession(player: Player, course: Course): StoredSession? {
         val session = StoredSession()
-        val section = config.getConfigurationSection("${course.id}:${player.uniqueId}") ?: return null
+        val section = config.getConfigurationSection("${course.name}:${player.uniqueId}") ?: return null
 
         session.time = section.getDouble("time")
         session.player = player
@@ -70,33 +70,33 @@ class SessionStorage : Base {
      * Store a session as a record session.
      */
     fun storeRecordSession(session: StoredSession) {
-        var section = config.getConfigurationSection("${session.course.id}:top")
+        var section = config.getConfigurationSection("${session.course.name}:top")
 
         if (section == null) {
-            section = config.createSection("${session.course.id}:top")
+            section = config.createSection("${session.course.name}:top")
         }
 
         section.set("time", session.time)
         section.set("player", session.player.uniqueId.toString())
 
         config.save(file)
-        Utils.log("Saved record session for course '${session.course.id}' to disk.")
+        Utils.log("Saved record session for course '${session.course.name}' to disk.")
     }
 
     /**
      * Store a player's session.
      */
     fun storePlayerSession(session: StoredSession) {
-        var section = config.getConfigurationSection("${session.course.id}:${session.player.uniqueId}")
+        var section = config.getConfigurationSection("${session.course.name}:${session.player.uniqueId}")
 
         if (section == null) {
-            section = config.createSection("${session.course.id}:${session.player.uniqueId}")
+            section = config.createSection("${session.course.name}:${session.player.uniqueId}")
         }
 
         section.set("time", session.time)
 
         config.save(file)
-        Utils.log("Saved personal best for player '${session.player.uniqueId}' on course '${session.course.id}'.")
+        Utils.log("Saved personal best for player '${session.player.uniqueId}' on course '${session.course.name}'.")
     }
 
     /**
@@ -113,7 +113,7 @@ class SessionStorage : Base {
     fun fetchOrderedSessions(course: Course): List<StoredSession>? {
 
         val orderedKeys = config.getKeys(false)
-            .filter { it.startsWith(course.id.toString()) }
+            .filter { it.startsWith(course.name) }
             .sortedBy { config.getDouble("$it.time", Double.MAX_VALUE) }
 
         return orderedKeys.map {

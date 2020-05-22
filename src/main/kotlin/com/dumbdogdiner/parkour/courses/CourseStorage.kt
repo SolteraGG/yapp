@@ -51,14 +51,14 @@ class CourseStorage : Base {
         for (key in config.getKeys(false)) {
             val course = Course()
 
-            course.id = UUID.fromString(key)
+            course.name = key
             config.getConfigurationSection(key)?.getString("name")?.let { course.name = it }
             config.getConfigurationSection(key)?.getString("description")?.let { course.description = it }
 
             // TODO: Potential bug material.
             val checkpoints: List<Location> = fetchCourseCheckpoints(key) ?: continue
 
-            checkpoints.forEach { course.addCheckpoint(it) }
+            checkpoints.forEach { course.addCheckpointAtLocation(it) }
             courses.add(course)
         }
 
@@ -93,10 +93,10 @@ class CourseStorage : Base {
      * Save a course to disk.
      */
     fun saveCourse(course: Course, skipSave: Boolean = false) {
-        var section = config.getConfigurationSection(course.id.toString())
+        var section = config.getConfigurationSection(course.name)
 
         if (section == null) {
-            section = config.createSection(course.id.toString())
+            section = config.createSection(course.name)
         }
 
         section.set("name", course.name)
@@ -107,15 +107,15 @@ class CourseStorage : Base {
             return
         }
         config.save(file)
-        Utils.log("Saved course '${course.id}' to disk.")
+        Utils.log("Saved course '${course.name}' to disk.")
     }
 
     /**
      * Delete a course from the config.
      */
     fun removeCourse(course: Course) {
-        config.set(course.id.toString(), null)
-        Utils.log("Deleted course '${course.id}' from disk.")
+        config.set(course.name, null)
+        Utils.log("Deleted course '${course.name}' from disk.")
     }
 
 }

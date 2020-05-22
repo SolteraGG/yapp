@@ -26,7 +26,7 @@ class CourseManager : Base {
      * Add a course.
      */
     fun addCourse(course: Course, preventSave: Boolean = false) {
-        courses[course.id.toString()] = course
+        courses[course.name] = course
         if (preventSave) {
             return
         }
@@ -37,7 +37,7 @@ class CourseManager : Base {
      * Remove a course.
      */
     fun removeCourse(course: Course) {
-        courses.remove(course.id.toString())
+        courses.remove(course.name)
         storage.removeCourse(course)
     }
 

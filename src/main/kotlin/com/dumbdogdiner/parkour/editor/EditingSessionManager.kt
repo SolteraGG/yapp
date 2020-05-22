@@ -5,6 +5,7 @@ import com.dumbdogdiner.parkour.courses.Course
 import com.dumbdogdiner.parkour.utils.Language
 import com.dumbdogdiner.parkour.utils.SoundUtils
 import com.dumbdogdiner.parkour.utils.Utils
+
 import org.bukkit.entity.Player
 
 class EditingSessionManager : Base {

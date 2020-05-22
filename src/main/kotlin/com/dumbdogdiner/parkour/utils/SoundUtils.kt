@@ -2,10 +2,13 @@ package com.dumbdogdiner.parkour.utils
 
 import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.ParkourPlugin
-import com.okkero.skedule.BukkitDispatcher
+
 import kotlinx.coroutines.*
+
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+
+import com.okkero.skedule.BukkitDispatcher
 
 /**
  * Utility methods for sending adorable fox notification sounds omg this was such a good idea i can't~
@@ -49,7 +52,7 @@ object SoundUtils : Base {
      */
     fun error(player: Player) {
         GlobalScope.launch(BukkitDispatcher(plugin)) {
-            playSound(player, Sound.BLOCK_NOTE_BLOCK_BASS)
+            playSound(player, Sound.BLOCK_NOTE_BLOCK_BASS, 0.943874f)
             playSound(player, Sound.ENTITY_ITEM_BREAK)
             playSound(player, Sound.ENTITY_FOX_HURT)
         }

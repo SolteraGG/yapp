@@ -1,6 +1,7 @@
 package com.dumbdogdiner.parkour.editor
 
 import com.dumbdogdiner.parkour.Base
+import com.dumbdogdiner.parkour.courses.Checkpoint
 import com.dumbdogdiner.parkour.courses.Course
 import com.dumbdogdiner.parkour.utils.Language
 import com.dumbdogdiner.parkour.utils.SoundUtils
@@ -19,7 +20,7 @@ import org.bukkit.inventory.ItemStack
  * TODO: are all these clones really necessary?
  */
 class EditingSession(val player: Player, val course: Course, private val type: Type) : Base {
-    private val editorTool = createItemTool()
+    private var boundaryCorner: Location? = null
 
     enum class Type {
         CREATE,
@@ -28,7 +29,9 @@ class EditingSession(val player: Player, val course: Course, private val type: T
     }
 
     init {
-        player.inventory.addItem(editorTool.clone())
+        player.inventory.addItem(checkpointTool.clone())
+        player.inventory.addItem(boundaryTool.clone())
+
         player.sendMessage(Language.createEditingSession)
         SoundUtils.info(player)
     }
@@ -37,10 +40,17 @@ class EditingSession(val player: Player, val course: Course, private val type: T
      * End this editing session.
      */
     fun end(): Course {
-        val tool = player.inventory.find { itemStack -> itemStack == editorTool.clone()  }
-        if (tool != null) {
-            player.inventory.remove(tool)
+        val checkpointTool = player.inventory.find { it == checkpointTool.clone()  }
+        val boundaryTool = player.inventory.find { it == boundaryTool.clone()  }
+
+        if (checkpointTool != null) {
+            player.inventory.remove(checkpointTool)
         }
+
+        if (boundaryTool != null) {
+            player.inventory.remove(boundaryTool)
+        }
+
         return course
     }
 
@@ -51,7 +61,7 @@ class EditingSession(val player: Player, val course: Course, private val type: T
         val item = e.item ?: return
         val block = e.clickedBlock ?: return
 
-        if (item != editorTool.clone()) {
+        if (item != checkpointTool.clone()) {
             return
         }
 
@@ -69,6 +79,22 @@ class EditingSession(val player: Player, val course: Course, private val type: T
     }
 
     /**
+     * Handle a player clicking any other block with the boundary tool.
+     */
+    fun handleEverythingElseGotClicked(e: PlayerInteractEvent) {
+        val item = e.item ?: return
+        val block = e.clickedBlock ?: return
+
+        if (item != boundaryTool.clone()) {
+            return
+        }
+
+        if (boundaryCorner == null) {
+            boundaryCorner = block.location
+        }
+    }
+
+    /**
      * Add a checkpoint to the course.
      */
     private fun addCheckpoint(loc: Location) {
@@ -78,14 +104,14 @@ class EditingSession(val player: Player, val course: Course, private val type: T
             return
         }
 
-        val checkpoint: Location? = course.findCheckpoint(loc)
+        val checkpoint: Checkpoint? = course.findCheckpointAtLocation(loc)
         if (checkpoint != null) {
             player.sendMessage(Language.checkpointExists)
             SoundUtils.error(player)
             return
         }
 
-        course.addCheckpoint(loc)
+        course.addCheckpointAtLocation(loc)
         player.sendMessage(Language.checkpointCreated)
         SoundUtils.info(player)
     }
@@ -94,7 +120,7 @@ class EditingSession(val player: Player, val course: Course, private val type: T
      * Remove a checkpoint from the course.
      */
     private fun removeCheckpoint(loc: Location) {
-        val checkpoint = course.findCheckpoint(loc)
+        val checkpoint = course.findCheckpointAtLocation(loc)
 
         if (checkpoint == null) {
             player.sendMessage(Language.checkpointNotFound)
@@ -115,7 +141,7 @@ class EditingSession(val player: Player, val course: Course, private val type: T
      */
     fun handleDropEvent(e: PlayerDropItemEvent) {
         if (
-            e.itemDrop.itemStack != editorTool
+            e.itemDrop.itemStack != checkpointTool
         ) {
             return
         }
@@ -137,26 +163,27 @@ class EditingSession(val player: Player, val course: Course, private val type: T
      * Handle the editor dying. Why this would ever happen I can't say.
      */
     fun handleEditorDeath(e: PlayerDeathEvent) {
-        e.itemsToKeep.add(editorTool.clone())
-        e.drops.remove(editorTool.clone())
+        e.itemsToKeep.add(checkpointTool.clone())
+        e.drops.remove(checkpointTool.clone())
     }
 
     companion object {
         /**
-         * Create a carbon copy of the editor tool used.
-         * TODO: See if ItemStack.clone() would be more efficient.
+         * Checkpoint tool - used for creating checkpoints.
          */
-        fun createItemTool(): ItemStack {
-            val editorTool = ItemStack(Material.BLAZE_ROD, 1)
+        private val checkpointTool = Utils.createItemStack(Material.BLAZE_ROD) {
+            it.setDisplayName(Utils.colorize("&r&6Course Editor"))
+            it.lore = mutableListOf("A magical glowing stick! oWO!!", "Use this to create parkour courses, or return them unto the void.")
+            it
+        }
 
-            val meta = editorTool.itemMeta
-            meta.setDisplayName(Utils.colorize("&r&6&lCourse Editor"))
-            meta.lore = mutableListOf("A magical glowing stick! oWO!!", "Use this to create parkour courses, or return them unto the void.")
-
-            editorTool.addUnsafeEnchantment(Enchantment.DURABILITY, 1)
-            editorTool.itemMeta = meta
-
-            return editorTool
+        /**
+         * Boundary tool - used for adding boundaries.
+         */
+        private val boundaryTool = Utils.createItemStack(Material.STICK) {
+            it.setDisplayName(Utils.colorize("&r&cBoundary Editor"))
+            it.lore = mutableListOf("Another magical glowing stick! uWU~", "Use this to add boundaries to your checkpoints. Players who exit these boundaries will be teleported to the previous checkpoint.")
+            it
         }
     }
 }

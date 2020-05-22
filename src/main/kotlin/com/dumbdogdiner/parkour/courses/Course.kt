@@ -1,40 +1,49 @@
 package com.dumbdogdiner.parkour.courses
 
 import com.dumbdogdiner.parkour.Base
-import com.dumbdogdiner.parkour.structures.Pad
 
 import org.bukkit.Location
-import java.util.*
 
 class Course : Base {
-
-    var id: UUID = UUID.randomUUID()
     var name = ""
     var description = ""
 
     // Object accesses are quicker than lists?
-    private val checkpoints = mutableListOf<Location>()
-    private val features = mutableListOf<Pad>()
+    private val checkpoints = mutableListOf<Checkpoint>()
+
+    /**
+     * Create and add a checkpoint to this course at the given location.
+     */
+    fun addCheckpointAtLocation(loc: Location) {
+        addCheckpoint(Checkpoint(loc))
+    }
 
     /**
      * Add a checkpoint to this course.
      */
-    fun addCheckpoint(loc: Location) {
-        checkpoints.add(loc)
+    fun addCheckpoint(checkpoint: Checkpoint) {
+        checkpoints.add(checkpoint)
     }
 
     /**
      * Remove a checkpoint given its index.
      */
-    fun removeCheckpoint(index: Int): Location {
+    fun removeCheckpoint(index: Int): Checkpoint {
         return checkpoints.removeAt(index)
+    }
+
+    /**
+     * Remove a checkpoint.
+     */
+    fun removeCheckpoint(checkpoint: Checkpoint): Boolean {
+        return checkpoints.remove(checkpoint)
     }
 
     /**
      * Remove a checkpoint at a given location.
      */
-    fun removeCheckpoint(loc: Location): Boolean {
-        val checkpoint = findCheckpoint(loc) ?: return false
+    fun removeCheckpointAtLocation(loc: Location): Boolean {
+        val checkpoint = findCheckpointAtLocation(loc) ?: return false
         checkpoints.remove(checkpoint)
         return false
     }
@@ -42,14 +51,14 @@ class Course : Base {
     /**
      * Find a checkpoint with the given location.
      */
-    fun findCheckpoint(loc: Location): Location? {
-        return checkpoints.find { it == loc }
+    fun findCheckpointAtLocation(loc: Location): Checkpoint? {
+        return checkpoints.find { it.getEndCheckpoint() == loc } ?: return null
     }
 
     /**
      * Return an ordered array of checkpoints.
      */
-    fun getCheckpoints(): MutableList<Location> {
-        return checkpoints
+    fun getCheckpoints(): List<Location> {
+        return checkpoints.map { it.getEndCheckpoint() }
     }
 }
