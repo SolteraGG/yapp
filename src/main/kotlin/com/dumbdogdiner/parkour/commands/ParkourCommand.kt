@@ -26,6 +26,12 @@ class ParkourCommand : TabExecutor, Base {
         // fine vlad i'll do case insensitivity
         val args = _args.map { it.toLowerCase() }.toTypedArray()
 
+        // Permissionless commands.
+        when(args[0]) {
+            "exit" -> { exit(sender); return true }
+            "back" -> { back(sender); return true }
+        }
+
         if (args[0] == "exit") {
             exit(sender)
             return true
@@ -46,6 +52,30 @@ class ParkourCommand : TabExecutor, Base {
         return true
     }
 
+    /**
+     * Allow players to teleport back to the previous checkpoint.
+     */
+    private fun back(sender: CommandSender) {
+        if (sender !is Player) {
+            sender.sendMessage(Language.noConsole)
+            return
+        }
+
+        val session = sessionManager.getSession(sender)
+        if (session != null) {
+            session.revertToPreviousCheckpoint()
+            return
+        }
+
+        // If no session punch the fox
+        sender.sendMessage(Language.noSession)
+        SoundUtils.error(sender)
+    }
+
+
+    /**
+     * Allows the player to exit the current parkour session.
+     */
     private fun exit(sender: CommandSender) {
         if (sender !is Player) {
             sender.sendMessage(Language.noConsole)
@@ -112,6 +142,32 @@ class ParkourCommand : TabExecutor, Base {
     }
 
     /**
+     * Edit a course.
+     */
+    fun edit(sender: CommandSender, args: Array<out String>) {
+        if (sender !is Player) {
+            sender.sendMessage(Language.noConsole)
+            return
+        }
+
+        if (args.size < 2) {
+            sender.sendMessage(Language.invalidCommandUsage.replace("%USAGE%", "/parkour edit <name>", true))
+            SoundUtils.error(sender)
+            return
+        }
+
+        val course = courseManager.getCourses().find { it.name == args[1] }
+
+        // If no course exists
+        if (course == null) {
+            sender.sendMessage(Language.courseNotFound.replace("%COURSE%", args[1], ignoreCase = true))
+            return SoundUtils.error(sender)
+        }
+
+        editingSessionManager.createEditingSession(sender, course, EditingSession.Type.MODIFY)
+    }
+
+    /**
      * Delete a course.
      */
     private fun delete(sender: CommandSender, args: Array<out String>) {
@@ -149,12 +205,13 @@ class ParkourCommand : TabExecutor, Base {
         args: Array<out String>
     ): MutableList<String> {
         if (!sender.hasPermission("parkour.command")) {
-            return mutableListOf("exit")
+            return mutableListOf("exit", "back")
         }
 
         return when {
-            args.size < 2 -> mutableListOf("exit", "list", "create", "delete")
+            args.size < 2 -> mutableListOf("exit", "back", "list", "create", "edit", "delete")
             args.size == 2 && args[0] == "list" -> courseManager.getCourses().map { it.name } as MutableList<String>
+            args.size == 2 && args[0] == "edit" -> courseManager.getCourses().map { it.name } as MutableList<String>
             args.size == 2 && args[0] == "delete" -> courseManager.getCourses().map { it.name } as MutableList<String>
             else -> mutableListOf()
         }

@@ -2,13 +2,11 @@ package com.dumbdogdiner.parkour.listeners
 
 import com.dumbdogdiner.parkour.Base
 import com.dumbdogdiner.parkour.utils.Utils
-import org.bukkit.Location
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockRedstoneEvent
-import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerMoveEvent
 
@@ -34,12 +32,12 @@ class PlayerSessionListener : Listener, Base {
 
     /**
      * Prevent the player from flying during courses.
-     * TODO: Check if this is drastically slow.
+     * TODO: Check if this is drastically slow. Edit: seems ok, might jump to coroutines at some point.
      */
     @EventHandler
     fun onPlayerMove(e: PlayerMoveEvent) {
-        if (sessionManager.isPlayerInSession(e.player)) {
-            sessionManager.endSession(e.player, returnToStart = true, escapeRecord = true)
+        if (e.player.isFlying && sessionManager.isPlayerInSession(e.player)) {
+            sessionManager.endSession(e.player, returnToStart = false, escapeRecord = true)
         }
     }
 }

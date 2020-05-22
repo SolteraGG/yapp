@@ -45,7 +45,7 @@ class CourseManager : Base {
      * Find a course who's first checkpoint is at the given location.
      */
     fun findCourseFromStart(location: Location): Course? {
-        return courses.values.find { it.getCheckpoints()[0] == location }
+        return courses.values.find { it.getCheckpoints().first().getEndCheckpoint() == location }
     }
 
     /**

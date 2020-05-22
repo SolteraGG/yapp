@@ -98,7 +98,7 @@ class EditingSession(val player: Player, val course: Course, private val type: T
      * Add a checkpoint to the course.
      */
     private fun addCheckpoint(loc: Location) {
-        if (course.getCheckpoints().lastOrNull() != null && course.getCheckpoints().last().world != loc.world) {
+        if (course.getCheckpoints().lastOrNull() != null && course.getCheckpoints().last().getEndCheckpoint().world != loc.world) {
             player.sendMessage(Language.badWorld)
             SoundUtils.error(player)
             return
@@ -141,7 +141,8 @@ class EditingSession(val player: Player, val course: Course, private val type: T
      */
     fun handleDropEvent(e: PlayerDropItemEvent) {
         if (
-            e.itemDrop.itemStack != checkpointTool
+            e.itemDrop.itemStack != checkpointTool ||
+            e.itemDrop.itemStack != boundaryTool
         ) {
             return
         }
@@ -173,7 +174,11 @@ class EditingSession(val player: Player, val course: Course, private val type: T
          */
         private val checkpointTool = Utils.createItemStack(Material.BLAZE_ROD) {
             it.setDisplayName(Utils.colorize("&r&6Course Editor"))
-            it.lore = mutableListOf("A magical glowing stick! oWO!!", "Use this to create parkour courses, or return them unto the void.")
+            it.lore = Utils.colorize(listOf(
+                "A magical glowing stick! oWO!!",
+                "Use this to create parkour courses, or return them unto the void.",
+                "&cDrop this tool to end the editing session."
+            ))
             it
         }
 
@@ -182,7 +187,11 @@ class EditingSession(val player: Player, val course: Course, private val type: T
          */
         private val boundaryTool = Utils.createItemStack(Material.STICK) {
             it.setDisplayName(Utils.colorize("&r&cBoundary Editor"))
-            it.lore = mutableListOf("Another magical glowing stick! uWU~", "Use this to add boundaries to your checkpoints. Players who exit these boundaries will be teleported to the previous checkpoint.")
+            it.lore = Utils.colorize(listOf(
+                "Another magical glowing stick! uWU~",
+                "Use this to add boundaries to your checkpoints. Players who exit these boundaries will be teleported to the previous checkpoint.",
+                "&cDrop this tool to end the editing session."
+            ))
             it
         }
     }

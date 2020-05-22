@@ -16,7 +16,6 @@ import java.util.*
 
 /**
  * Wrapper class for storing course data.
- * TODO: Use serialized locations to prevent world issues.
  */
 class CourseStorage : Base {
     private val file: File
@@ -52,10 +51,8 @@ class CourseStorage : Base {
             val course = Course()
 
             course.name = key
-            config.getConfigurationSection(key)?.getString("name")?.let { course.name = it }
             config.getConfigurationSection(key)?.getString("description")?.let { course.description = it }
 
-            // TODO: Potential bug material.
             val checkpoints: List<Location> = fetchCourseCheckpoints(key) ?: continue
 
             checkpoints.forEach { course.addCheckpointAtLocation(it) }
@@ -99,9 +96,8 @@ class CourseStorage : Base {
             section = config.createSection(course.name)
         }
 
-        section.set("name", course.name)
         section.set("description", course.description)
-        section.set("checkpoints", course.getCheckpoints().map { Utils.serializeLocation(it) })
+        section.set("checkpoints", course.getCheckpoints().map { Utils.serializeLocation(it.getEndCheckpoint()) })
 
         if (skipSave) {
             return

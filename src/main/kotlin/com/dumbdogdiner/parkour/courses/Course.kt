@@ -56,9 +56,16 @@ class Course : Base {
     }
 
     /**
-     * Return an ordered array of checkpoints.
+     * Return an ordered list of checkpoints.
      */
-    fun getCheckpoints(): List<Location> {
+    fun getCheckpoints(): List<Checkpoint> {
+        return checkpoints
+    }
+
+    /**
+     * Return an ordered list of checkpoint end locations.
+     */
+    fun getCheckpointLocations(): List<Location> {
         return checkpoints.map { it.getEndCheckpoint() }
     }
 }

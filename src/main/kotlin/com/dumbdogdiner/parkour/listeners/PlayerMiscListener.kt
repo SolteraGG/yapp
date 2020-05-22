@@ -7,6 +7,7 @@ import org.bukkit.entity.Player
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 
@@ -45,4 +46,9 @@ class PlayerMiscListener : Listener, Base {
             return
         }
     }
+
+    /**
+     * Prevent naughty boys (like me uwu~) from breaking checkpoint markers.
+     */
+    fun onBreakBlock(e: BlockBreakEvent) {}
 }

@@ -60,5 +60,12 @@ object Configuration {
         plugin.saveConfig()
         plugin.reloadConfig()
     }
-    private const val path = "language."
+
+    private const val path = "language.";
+
+    /**
+     * Migrate
+     */
+    fun migrateV1Config() {}
+
 }

@@ -40,6 +40,9 @@ class Session(val player: Player, val course: Course) : Base {
      * Advance the player onto the next checkpoint.
      */
     private fun nextCheckpoint() {
+        previousCheckpoint.playerDidFinish(player)
+        nextCheckpoint.playerDidStart(player)
+
         previousCheckpointId++
         nextCheckpointId++
 
@@ -55,17 +58,18 @@ class Session(val player: Player, val course: Course) : Base {
     /**
      * Revert the player back to the last checkpoint.
      */
-    fun revertToLastCheckpoint() {
-        player.teleport(previousCheckpoint.clone().setDirection(player.location.direction))
+    fun revertToPreviousCheckpoint() {
+        player.teleport(previousCheckpoint.getEndCheckpoint().clone().setDirection(player.location.direction))
     }
 
     /**
-     *
+     * End this session.
      */
     fun end(returnToStart: Boolean): Long {
         if (returnToStart) {
-            player.teleport(course.getCheckpoints().first().clone().setDirection(player.location.direction))
+            player.teleport(course.getCheckpoints().first().getEndCheckpoint().clone().setDirection(player.location.direction))
         }
+
         /* TODO: Properly implement this.
         player.inventory.remove(returnItem)
         player.inventory.remove(resetItem)
@@ -81,7 +85,7 @@ class Session(val player: Player, val course: Course) : Base {
     fun handleCheckpoint(e: PlayerInteractEvent) {
         val block = e.clickedBlock ?: return
 
-        if (course.getCheckpoints().first() == block.location) {
+        if (course.getCheckpoints().first().getEndCheckpoint() == block.location) {
             // Add a delay to prevent people from spamming the first checkpoint.
             val steppedOn = firstCheckpointSteppedOn
             firstCheckpointSteppedOn = System.currentTimeMillis()
@@ -93,11 +97,16 @@ class Session(val player: Player, val course: Course) : Base {
 
             player.sendMessage(Language.restartCourse.replace("%COURSE%", course.name, ignoreCase = true))
             SoundUtils.info(player)
+
+            // Reset checkpoints to beginning.
+            nextCheckpointId = 1
+            previousCheckpointId = 0
             timer.reset()
+
             return
         }
 
-        if (nextCheckpoint != block.location) {
+        if (nextCheckpoint.getEndCheckpoint() != block.location) {
             return
         }
 

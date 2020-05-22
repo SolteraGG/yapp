@@ -6,6 +6,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.collections.HashMap
 
 import org.bukkit.Location
 import org.bukkit.Particle
@@ -28,6 +29,11 @@ abstract class Pad(private val location: Location, private val particle: Particl
     private lateinit var job: Job
 
     /**
+     * A map of players this pad should be active for.
+     */
+    private val players = HashMap<String, Player>()
+
+    /**
      * Called when the player steps on the pressure plate.
      */
     abstract fun trigger(player: Player)
@@ -35,8 +41,10 @@ abstract class Pad(private val location: Location, private val particle: Particl
     /**
      * Called when a player enters the course containing this pad.
      */
-    fun init(player: Player, firstPlayer: Boolean) {
-        if (firstPlayer) {
+    fun init(player: Player) {
+        players[player.uniqueId.toString()] = player
+
+        if (!isActive) {
             startParticles()
         }
     }
@@ -44,8 +52,10 @@ abstract class Pad(private val location: Location, private val particle: Particl
     /**
      * Called when a given player leaves the course containing this pad.
      */
-    fun uninit(player: Player, lastPlayer: Boolean) {
-        if (lastPlayer) {
+    fun uninit(player: Player) {
+        players.remove(player.uniqueId.toString(), player)
+
+        if (players.size == 0 && isActive) {
             stopParticles()
         }
     }
