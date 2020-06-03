@@ -1,18 +1,17 @@
 package com.dumbdogdiner.yapp.utils
 
-import com.dumbdogdiner.yapp.YappParkourPlugin
+import com.dumbdogdiner.yapp.Base
 
-object Configuration {
-    private val plugin = YappParkourPlugin.instance
-
+/**
+ * Object for managing the creation, migration, and default registrin
+ */
+object Configuration : Base {
     fun loadDefaultConfig() {
-        val config = plugin.config
-
         config.options()
             .header("""
                 ${plugin.description.name} v${plugin.description.version}
-                
-                Parkour Main Configuration File
+
+                Main Configuration File
                 
                 Developer(s): ${plugin.description.authors}\n
             """.trimIndent())
@@ -21,7 +20,7 @@ object Configuration {
         config.addDefault("enableControls", false)
 
         // BEGIN LINGUISTICS
-        config.addDefault(path + "prefix", "&d&lPawkour &r&8» &r")
+        config.addDefault(path + "prefix", "&d&lParkour &r&8» &r")
         config.addDefault(path + "noPermission", "&cYou do not have permission to run this command.")
         config.addDefault(path + "noConsole", "&cThis command must be run as a player.")
         config.addDefault(path + "unknownSubCommand", "&cUnknown or invalid subcommand.")
@@ -54,6 +53,9 @@ object Configuration {
         config.addDefault(path + "badBlock", "&cThis is not a pressure plate!")
         config.addDefault(path + "courseSaved", "&bSaved course!")
 
+        // Misc Linguistics
+        config.addDefault(path + "blockIsCheckpoint", "&c&lHey! &rYou can't break that block.")
+
         // END LINGUISTICS
 
         config.options().copyDefaults(true)
@@ -62,10 +64,4 @@ object Configuration {
     }
 
     private const val path = "language.";
-
-    /**
-     * Migrate
-     */
-    fun migrateV1Config() {}
-
 }

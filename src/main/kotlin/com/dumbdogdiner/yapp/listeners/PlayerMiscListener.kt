@@ -1,6 +1,9 @@
 package com.dumbdogdiner.yapp.listeners
 
 import com.dumbdogdiner.yapp.Base
+import com.dumbdogdiner.yapp.utils.Language
+import com.dumbdogdiner.yapp.utils.SoundUtils
+import com.dumbdogdiner.yapp.utils.Utils
 import org.bukkit.entity.Player
 
 import org.bukkit.event.EventHandler
@@ -48,5 +51,20 @@ class PlayerMiscListener : Listener, Base {
     /**
      * Prevent naughty boys (like me uwu~) from breaking checkpoint markers.
      */
-    fun onBreakBlock(e: BlockBreakEvent) {}
+    fun onBreakBlock(e: BlockBreakEvent) {
+        if (!Utils.isPressurePlate(e.block.type)) {
+            return
+        }
+
+        // This is slow, perhaps populate a map of all checkpoints
+        // during initialization?
+        for (course in courseManager.getCourses()) {
+            if (course.findCheckpointAtLocation(e.block.location) != null) {
+                e.isCancelled = true
+                e.player.sendMessage(Language.blockIsCheckpoint)
+                SoundUtils.error(e.player)
+                break
+            }
+        }
+    }
 }

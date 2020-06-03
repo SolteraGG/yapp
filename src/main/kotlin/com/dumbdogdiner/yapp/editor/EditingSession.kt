@@ -12,6 +12,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.Inventory
 
 /**
  * A player's editing session.
@@ -19,6 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent
  */
 class EditingSession(val player: Player, val course: Course, private val type: Type) : Base {
     private var boundaryCorner: Location? = null
+    // Todo: private val preSessionInventory: Inventory
 
     enum class Type {
         CREATE,
@@ -29,6 +31,7 @@ class EditingSession(val player: Player, val course: Course, private val type: T
     init {
         player.inventory.addItem(checkpointTool.clone())
         player.inventory.addItem(boundaryTool.clone())
+        player.inventory.addItem(jumpPadTool.clone())
 
         player.sendMessage(Language.createEditingSession)
         SoundUtils.info(player)
@@ -38,8 +41,10 @@ class EditingSession(val player: Player, val course: Course, private val type: T
      * End this editing session.
      */
     fun end(): Course {
+        // Todo: This is slow.
         val checkpointTool = player.inventory.find { it == checkpointTool.clone()  }
         val boundaryTool = player.inventory.find { it == boundaryTool.clone()  }
+        val jumpPadTool = player.inventory.find { it == jumpPadTool.clone() }
 
         if (checkpointTool != null) {
             player.inventory.remove(checkpointTool)
@@ -47,6 +52,10 @@ class EditingSession(val player: Player, val course: Course, private val type: T
 
         if (boundaryTool != null) {
             player.inventory.remove(boundaryTool)
+        }
+
+        if (jumpPadTool != null) {
+            player.inventory.remove(jumpPadTool)
         }
 
         return course
@@ -140,7 +149,8 @@ class EditingSession(val player: Player, val course: Course, private val type: T
     fun handleDropEvent(e: PlayerDropItemEvent) {
         if (
             e.itemDrop.itemStack != checkpointTool ||
-            e.itemDrop.itemStack != boundaryTool
+            e.itemDrop.itemStack != boundaryTool ||
+            e.itemDrop.itemStack != jumpPadTool
         ) {
             return
         }
@@ -154,8 +164,8 @@ class EditingSession(val player: Player, val course: Course, private val type: T
             dropProgress = true
         }
 
-        editingSessionManager.endEditingSession(this, dropProgress)
         e.itemDrop.remove()
+        editingSessionManager.endEditingSession(this, dropProgress)
     }
 
     /**
@@ -189,6 +199,19 @@ class EditingSession(val player: Player, val course: Course, private val type: T
                 "Another magical glowing stick! uWU~",
                 "Use this to add boundaries to your checkpoints. Players who exit these boundaries will be teleported to the previous checkpoint.",
                 "&cDrop this tool to end the editing session."
+            ))
+            it
+        }
+
+        /**
+         * Jump Pad tool - used for adding jump pads.
+         */
+        private val jumpPadTool = Utils.createItemStack(Material.RABBIT_FOOT) {
+            it.setDisplayName(Utils.colorize("&r&aJump Pad Editor"))
+            it.lore = Utils.colorize(listOf(
+                    "Not quite a magical glowing stick, but it'll do.",
+                    "Use this to add and remove jump pads to your course. Players who step on these pads will be launched in a specified direction with a certain velocity.",
+                    "&cDrop this tool to end the editing session."
             ))
             it
         }

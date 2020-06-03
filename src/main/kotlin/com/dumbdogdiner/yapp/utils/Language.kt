@@ -13,6 +13,7 @@ object Language {
     val prefix
         get() = get("$path.prefix")
 
+    // Todo: Do these really need language values?
     val noPermission
         get() = "$prefix${get("$path.noPermission")}"
     val noConsole
@@ -70,4 +71,7 @@ object Language {
     val courseSaved
         get() = "$prefix${get("$path.courseSaved")}"
 
+
+    val blockIsCheckpoint
+        get() = "$prefix${get("$path.blockIsCheckpoint")}"
 }

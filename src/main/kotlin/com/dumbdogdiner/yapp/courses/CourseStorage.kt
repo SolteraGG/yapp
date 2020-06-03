@@ -17,7 +17,7 @@ import org.bukkit.configuration.file.YamlConfiguration
  */
 class CourseStorage : Base {
     private val file: File
-    private val config: FileConfiguration
+    private val storage: FileConfiguration
 
     init {
         val plugin = YappParkourPlugin.instance
@@ -29,9 +29,9 @@ class CourseStorage : Base {
             plugin.saveResource("courses.yml", false)
         }
 
-        config = YamlConfiguration()
+        storage = YamlConfiguration()
         try {
-            config.load(file)
+            storage.load(file)
         } catch (e: IOException) {
             e.printStackTrace()
         } catch (e: InvalidConfigurationException) {
@@ -45,11 +45,11 @@ class CourseStorage : Base {
     fun fetchCourses(): MutableList<Course> {
         val courses = mutableListOf<Course>()
 
-        for (key in config.getKeys(false)) {
+        for (key in storage.getKeys(false)) {
             val course = Course()
 
             course.name = key
-            config.getConfigurationSection(key)?.getString("description")?.let { course.description = it }
+            storage.getConfigurationSection(key)?.getString("description")?.let { course.description = it }
 
             val checkpoints: List<Location> = fetchCourseCheckpoints(key) ?: continue
 
@@ -64,7 +64,7 @@ class CourseStorage : Base {
      * Fetch a course's checkpoints from storage.
      */
     fun fetchCourseCheckpoints(id: String): List<Location>? {
-        val section = config.getConfigurationSection(id) ?: return null
+        val section = storage.getConfigurationSection(id) ?: return null
         val res = mutableListOf<Location>()
 
         for (checkpoint in section.getStringList("checkpoints")) {
@@ -80,7 +80,7 @@ class CourseStorage : Base {
      */
     fun saveCourses(courses: MutableList<Course>) {
         courses.forEach { saveCourse(it, true) }
-        config.save(file)
+        storage.save(file)
         Utils.log("Saved ${courses.size} courses to disk.")
     }
 
@@ -88,10 +88,10 @@ class CourseStorage : Base {
      * Save a course to disk.
      */
     fun saveCourse(course: Course, skipSave: Boolean = false) {
-        var section = config.getConfigurationSection(course.name)
+        var section = storage.getConfigurationSection(course.name)
 
         if (section == null) {
-            section = config.createSection(course.name)
+            section = storage.createSection(course.name)
         }
 
         section.set("description", course.description)
@@ -100,7 +100,7 @@ class CourseStorage : Base {
         if (skipSave) {
             return
         }
-        config.save(file)
+        storage.save(file)
         Utils.log("Saved course '${course.name}' to disk.")
     }
 
@@ -108,7 +108,7 @@ class CourseStorage : Base {
      * Delete a course from the config.
      */
     fun removeCourse(course: Course) {
-        config.set(course.name, null)
+        storage.set(course.name, null)
         Utils.log("Deleted course '${course.name}' from disk.")
     }
 

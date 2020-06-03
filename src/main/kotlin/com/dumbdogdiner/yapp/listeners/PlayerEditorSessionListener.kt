@@ -17,10 +17,10 @@ class PlayerEditorSessionListener : Listener, Base {
      */
     @EventHandler
     private fun handleCheckpointClicked(e: PlayerInteractEvent) {
-        val block = e.clickedBlock
-        if (e.action != Action.RIGHT_CLICK_BLOCK || block == null) { return }
-
         val session = editingSessionManager.getEditingSession(e.player) ?: return
+        val block = e.clickedBlock
+
+        if (e.action != Action.RIGHT_CLICK_BLOCK || block == null) { return }
 
         session.handleCheckpointClicked(e)
     }

@@ -19,7 +19,7 @@ import org.bukkit.entity.Player
  */
 class SessionStorage : Base {
     private val file: File = File(plugin.dataFolder, "records.yml")
-    private val config: FileConfiguration
+    private val sessionConfig: FileConfiguration
 
     init {
         if (!file.exists()) {
@@ -27,9 +27,9 @@ class SessionStorage : Base {
             plugin.saveResource("records.yml", false)
         }
 
-        config = YamlConfiguration()
+        sessionConfig = YamlConfiguration()
         try {
-            config.load(file)
+            sessionConfig.load(file)
         } catch (e: IOException) {
             e.printStackTrace()
         } catch (e: InvalidConfigurationException) {
@@ -42,7 +42,7 @@ class SessionStorage : Base {
      */
     fun fetchRecordSession(course: Course): StoredSession? {
         val session = StoredSession()
-        val section = config.getConfigurationSection("${course.name}:top") ?: return null
+        val section = sessionConfig.getConfigurationSection("${course.name}:top") ?: return null
 
         session.time = section.getDouble("time")
         session.player = Bukkit.getOfflinePlayer(UUID.fromString(section.getString("player")))
@@ -56,7 +56,7 @@ class SessionStorage : Base {
      */
     fun fetchPlayerSession(player: Player, course: Course): StoredSession? {
         val session = StoredSession()
-        val section = config.getConfigurationSection("${course.name}:${player.uniqueId}") ?: return null
+        val section = sessionConfig.getConfigurationSection("${course.name}:${player.uniqueId}") ?: return null
 
         session.time = section.getDouble("time")
         session.player = player
@@ -69,16 +69,16 @@ class SessionStorage : Base {
      * Store a session as a record session.
      */
     fun storeRecordSession(session: StoredSession) {
-        var section = config.getConfigurationSection("${session.course.name}:top")
+        var section = sessionConfig.getConfigurationSection("${session.course.name}:top")
 
         if (section == null) {
-            section = config.createSection("${session.course.name}:top")
+            section = sessionConfig.createSection("${session.course.name}:top")
         }
 
         section.set("time", session.time)
         section.set("player", session.player.uniqueId.toString())
 
-        config.save(file)
+        sessionConfig.save(file)
         Utils.log("Saved record session for course '${session.course.name}' to disk.")
     }
 
@@ -86,15 +86,15 @@ class SessionStorage : Base {
      * Store a player's session.
      */
     fun storePlayerSession(session: StoredSession) {
-        var section = config.getConfigurationSection("${session.course.name}:${session.player.uniqueId}")
+        var section = sessionConfig.getConfigurationSection("${session.course.name}:${session.player.uniqueId}")
 
         if (section == null) {
-            section = config.createSection("${session.course.name}:${session.player.uniqueId}")
+            section = sessionConfig.createSection("${session.course.name}:${session.player.uniqueId}")
         }
 
         section.set("time", session.time)
 
-        config.save(file)
+        sessionConfig.save(file)
         Utils.log("Saved personal best for player '${session.player.uniqueId}' on course '${session.course.name}'.")
     }
 
@@ -111,13 +111,13 @@ class SessionStorage : Base {
      * are no sessions on record.
      */
     fun fetchOrderedSessions(course: Course): List<StoredSession> {
-        val orderedKeys = config.getKeys(false)
+        val orderedKeys = sessionConfig.getKeys(false)
             .filter { it.startsWith(course.name) }
-            .sortedBy { config.getDouble("$it.time", Double.MAX_VALUE) }
+            .sortedBy { sessionConfig.getDouble("$it.time", Double.MAX_VALUE) }
 
         return orderedKeys.map {
             val session = StoredSession()
-            val section = config.getConfigurationSection(it) ?: return listOf()
+            val section = sessionConfig.getConfigurationSection(it) ?: return listOf()
 
             session.time = section.getDouble("time")
             session.player = Bukkit.getOfflinePlayer(UUID.fromString(section.getString("player")))

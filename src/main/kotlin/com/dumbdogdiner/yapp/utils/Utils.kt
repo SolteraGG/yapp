@@ -38,8 +38,8 @@ object Utils {
             return Bukkit.getServer()
         }
 
-    private const val consolePrefix = "&dPawkour &r&8» &r"
-    private const val errorPrefix = "&dPawkour &eERROR &r&8» &r"
+    private const val consolePrefix = "&dYapp &r&8» &r"
+    private const val errorPrefix = "&dYapp &eERROR &r&8» &r"
 
     fun log(message: String) = server.consoleSender.sendMessage(colorize("$consolePrefix$message"))
     fun log(message: Throwable) = server.consoleSender.sendMessage(colorize("$errorPrefix$message"))

@@ -52,6 +52,7 @@ object SoundUtils : Base {
      */
     fun error(player: Player) {
         GlobalScope.launch(BukkitDispatcher(plugin)) {
+            // stixil, have you noticed this is an F, not an F# yet?~
             playSound(player, Sound.BLOCK_NOTE_BLOCK_BASS, 0.943874f)
             playSound(player, Sound.ENTITY_ITEM_BREAK)
             playSound(player, Sound.ENTITY_FOX_HURT)
@@ -76,6 +77,15 @@ object SoundUtils : Base {
         GlobalScope.launch(BukkitDispatcher(plugin)) {
             playSound(player, Sound.ENTITY_PLAYER_LEVELUP)
             playSound(player, Sound.ENTITY_WITHER_SPAWN)
+        }
+    }
+
+    /**
+     * Tick sound for incremental update type stuff owo
+     */
+    fun tick(player: Player, pitch: Float) {
+        GlobalScope.launch(BukkitDispatcher(plugin)) {
+            playSound(player, Sound.BLOCK_NOTE_BLOCK_SNARE, pitch)
         }
     }
 
