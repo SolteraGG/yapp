@@ -1,9 +1,9 @@
-# Parkour
+# Yet Another Parkour Plugin
 
 [![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.jcx.ovh%2Fjob%2FDumbDogDiner%2Fjob%2Fparkour%2Fjob%2Fstable%2F&label=jenkins%20%7C%20stable&logo=jenkins&logoColor=white)](https://ci.jcx.ovh/job/DumbDogDiner/job/parkour/job/stable/)
 [![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.jcx.ovh%2Fjob%2FDumbDogDiner%2Fjob%2Fparkour%2Fjob%2Fdev%2F&label=jenkins%20%7C%20dev&logo=jenkins&logoColor=white)](https://ci.jcx.ovh/job/DumbDogDiner/job/parkour/job/dev/)
 
-Interactive Minecraft Parkour plugin with a personality.
+**YaPP** - interactive Minecraft Parkour plugin with a personality.
 
 ## Features
 - Course Editor - create courses by using the `/pk create <name>` command, and use the editor to add checkpoints to the course. Once finished, drop the editor, and the course will be finalized.
