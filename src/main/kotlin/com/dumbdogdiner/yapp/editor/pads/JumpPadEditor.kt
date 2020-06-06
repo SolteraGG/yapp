@@ -13,14 +13,21 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+import org.bukkit.Location
+
 import com.okkero.skedule.BukkitDispatcher
+
 
 /**
  * Editor class for jump pads.
  */
-class JumpPadEditor(val session: EditingSession, val checkpoint: Checkpoint) : Base {
+class JumpPadEditor(
+        val session: EditingSession,
+        val checkpoint: Checkpoint,
+        val location: Location
+) : Base {
     private val pad = JumpPad(
-            session.player.location,
+            location,
             VectorUtils.rotFromLoc(session.player.location),
             1
     )
@@ -28,6 +35,10 @@ class JumpPadEditor(val session: EditingSession, val checkpoint: Checkpoint) : B
 
     private lateinit var job: Job
     private var shouldUpdate = false
+
+    init {
+        start()
+    }
 
     /**
      * Begins updating location based on the player's view angle.
