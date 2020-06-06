@@ -1,18 +1,15 @@
 package com.dumbdogdiner.yapp.structures
 
 import com.dumbdogdiner.yapp.Base
-
+import com.okkero.skedule.BukkitDispatcher
+import kotlin.collections.HashMap
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.collections.HashMap
-
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.entity.Player
-
-import com.okkero.skedule.BukkitDispatcher
 
 /**
  * Represents a pressure plate that the player can step on, causing something interesting to happen owo~
@@ -68,7 +65,7 @@ abstract class Pad(private val location: Location, private val particle: Particl
         isActive = true
         job = GlobalScope.launch(BukkitDispatcher(plugin)) {
             while (isActive) {
-                location.world.spawnParticle(particle, location.clone().add(0.0,0.5,0.0),20)
+                location.world.spawnParticle(particle, location.clone().add(0.0, 0.5, 0.0), 20)
                 delay(1000)
             }
         }

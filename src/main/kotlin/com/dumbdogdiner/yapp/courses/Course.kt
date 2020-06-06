@@ -1,7 +1,6 @@
 package com.dumbdogdiner.yapp.courses
 
 import com.dumbdogdiner.yapp.Base
-
 import org.bukkit.Location
 
 class Course : Base {

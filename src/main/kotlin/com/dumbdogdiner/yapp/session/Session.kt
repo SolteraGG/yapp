@@ -6,7 +6,6 @@ import com.dumbdogdiner.yapp.utils.Language
 import com.dumbdogdiner.yapp.utils.SoundUtils
 import com.dumbdogdiner.yapp.utils.TimerUtils
 import com.dumbdogdiner.yapp.utils.Utils
-
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerDropItemEvent
@@ -88,7 +87,6 @@ class Session(val player: Player, val course: Course) : Base {
                 return
             }
 
-
             player.sendMessage(Language.restartCourse.replace("%COURSE%", course.name, ignoreCase = true))
             SoundUtils.info(player)
 
@@ -123,18 +121,18 @@ class Session(val player: Player, val course: Course) : Base {
 
     companion object {
         val returnItem = Utils.createItemStack(Material.EMERALD_BLOCK) {
-            it.setDisplayName("&aReset");
-            it.lore = Utils.colorize(listOf("Right click to return to the previous checkpoint.", "&cYour elapsed time will not reset."));
+            it.setDisplayName("&aReset")
+            it.lore = Utils.colorize(listOf("Right click to return to the previous checkpoint.", "&cYour elapsed time will not reset."))
             it
         }
         val resetItem = Utils.createItemStack(Material.GOLD_BLOCK) {
-            it.setDisplayName("&aRestart");
-            it.lore = Utils.colorize(listOf("Right click to return to the start of the course.", "Your elapsed time &awill &rbe reset."));
+            it.setDisplayName("&aRestart")
+            it.lore = Utils.colorize(listOf("Right click to return to the start of the course.", "Your elapsed time &awill &rbe reset."))
             it
         }
         val exitItem = Utils.createItemStack(Material.REDSTONE_BLOCK) {
-            it.setDisplayName("&aExit");
-            it.lore = Utils.colorize(listOf("Right click to exit this course.", "&cYour elapsed time will not reset."));
+            it.setDisplayName("&aExit")
+            it.lore = Utils.colorize(listOf("Right click to exit this course.", "&cYour elapsed time will not reset."))
             it
         }
         val controls = listOf(returnItem, resetItem, exitItem)

@@ -7,31 +7,26 @@ import com.dumbdogdiner.yapp.structures.JumpPad
 import com.dumbdogdiner.yapp.utils.MathUtils
 import com.dumbdogdiner.yapp.utils.SoundUtils
 import com.dumbdogdiner.yapp.utils.VectorUtils
-
+import com.okkero.skedule.BukkitDispatcher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 import org.bukkit.Location
-
-import com.okkero.skedule.BukkitDispatcher
-
 
 /**
  * Editor class for jump pads.
  */
 class JumpPadEditor(
-        val session: EditingSession,
-        val checkpoint: Checkpoint,
-        val location: Location
+    val session: EditingSession,
+    val checkpoint: Checkpoint,
+    val location: Location
 ) : Base {
     private val pad = JumpPad(
             location,
             VectorUtils.rotFromLoc(session.player.location),
             1
     )
-
 
     private lateinit var job: Job
     private var shouldUpdate = false
@@ -51,7 +46,7 @@ class JumpPadEditor(
         shouldUpdate = true
 
         job = GlobalScope.launch(BukkitDispatcher(plugin)) {
-            while(shouldUpdate) {
+            while (shouldUpdate) {
                 val dir = VectorUtils.rotFromLoc(session.player.location)
                 if (pad.direction != dir) {
                     pad.direction = dir
@@ -64,7 +59,6 @@ class JumpPadEditor(
             }
         }
     }
-
 
     /**
      * End the editing session and return the modified jump pad.

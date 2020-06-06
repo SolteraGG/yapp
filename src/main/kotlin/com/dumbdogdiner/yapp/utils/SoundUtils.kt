@@ -2,13 +2,12 @@ package com.dumbdogdiner.yapp.utils
 
 import com.dumbdogdiner.yapp.Base
 import com.dumbdogdiner.yapp.YappParkourPlugin
-
-import kotlinx.coroutines.*
-
+import com.okkero.skedule.BukkitDispatcher
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.bukkit.Sound
 import org.bukkit.entity.Player
-
-import com.okkero.skedule.BukkitDispatcher
 
 /**
  * Utility methods for sending adorable fox notification sounds omg this was such a good idea i can't~

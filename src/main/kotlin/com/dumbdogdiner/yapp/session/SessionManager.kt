@@ -11,7 +11,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.Location
-
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockRedstoneEvent
 import org.bukkit.event.player.PlayerInteractEvent
@@ -23,7 +22,6 @@ class SessionManager : Base {
     private val playerInteractions = HashMap<Location, PlayerInteractEvent>()
 
     private val sessions = HashMap<Player, Session>()
-
 
     /**
      * Create a new player session.

@@ -3,11 +3,9 @@ package com.dumbdogdiner.yapp.session
 import com.dumbdogdiner.yapp.Base
 import com.dumbdogdiner.yapp.courses.Course
 import com.dumbdogdiner.yapp.utils.Utils
-
 import java.io.File
 import java.io.IOException
-import java.util.*
-
+import java.util.UUID
 import org.bukkit.Bukkit
 import org.bukkit.configuration.InvalidConfigurationException
 import org.bukkit.configuration.file.FileConfiguration

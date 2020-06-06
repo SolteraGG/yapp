@@ -3,11 +3,14 @@ package com.dumbdogdiner.yapp
 import com.dumbdogdiner.yapp.commands.ParkourCommand
 import com.dumbdogdiner.yapp.courses.CourseManager
 import com.dumbdogdiner.yapp.editor.EditingSessionManager
-import com.dumbdogdiner.yapp.listeners.*
+import com.dumbdogdiner.yapp.listeners.PlayerEditorSessionListener
+import com.dumbdogdiner.yapp.listeners.PlayerMiscListener
+import com.dumbdogdiner.yapp.listeners.PlayerQuitListener
+import com.dumbdogdiner.yapp.listeners.PlayerSessionListener
+import com.dumbdogdiner.yapp.listeners.WorldListener
 import com.dumbdogdiner.yapp.session.SessionManager
 import com.dumbdogdiner.yapp.utils.Configuration
 import com.dumbdogdiner.yapp.utils.Utils
-
 import org.bukkit.plugin.java.JavaPlugin
 
 class YappParkourPlugin : JavaPlugin() {
@@ -39,6 +42,8 @@ class YappParkourPlugin : JavaPlugin() {
         if (server.pluginManager.getPlugin("PlaceholderAPI") != null) {
             Utils.log("Attached PlaceholderAPI extension.")
             PapiExpansion().register()
+        } else {
+            Utils.log("PlaceholderAPI is not installed - skipping placeholder registration.")
         }
 
         // Register commands owo~

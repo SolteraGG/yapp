@@ -3,9 +3,8 @@ package com.dumbdogdiner.yapp
 import com.dumbdogdiner.yapp.courses.CourseManager
 import com.dumbdogdiner.yapp.editor.EditingSessionManager
 import com.dumbdogdiner.yapp.session.SessionManager
-import org.bukkit.configuration.file.FileConfiguration
-
 import java.util.logging.Logger
+import org.bukkit.configuration.file.FileConfiguration
 
 interface Base {
     val plugin: YappParkourPlugin

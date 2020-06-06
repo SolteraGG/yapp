@@ -5,7 +5,6 @@ import com.dumbdogdiner.yapp.courses.Course
 import com.dumbdogdiner.yapp.utils.Language
 import com.dumbdogdiner.yapp.utils.SoundUtils
 import com.dumbdogdiner.yapp.utils.Utils
-
 import org.bukkit.entity.Player
 
 class EditingSessionManager : Base {
