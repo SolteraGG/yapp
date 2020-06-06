@@ -6,7 +6,6 @@ import com.dumbdogdiner.yapp.editor.EditingSession
 import com.dumbdogdiner.yapp.utils.Language
 import com.dumbdogdiner.yapp.utils.SoundUtils
 import com.dumbdogdiner.yapp.utils.Utils
-
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
@@ -27,7 +26,7 @@ class ParkourCommand : TabExecutor, Base {
         val args = _args.map { it.toLowerCase() }.toTypedArray()
 
         // Permissionless commands.
-        when(args[0]) {
+        when (args[0]) {
             "exit" -> { exit(sender); return true }
             "back" -> { back(sender); return true }
         }
@@ -72,7 +71,6 @@ class ParkourCommand : TabExecutor, Base {
         SoundUtils.error(sender)
     }
 
-
     /**
      * Allows the player to exit the current parkour session.
      */
@@ -103,8 +101,8 @@ class ParkourCommand : TabExecutor, Base {
     private fun list(sender: CommandSender) {
         sender.sendMessage(Language.listCount.replace("%COUNT%", plugin.courseManager.getCourses().size.toString(), true))
         courseManager.getCourses()
-            .map { it -> Utils.colorize(String.format(" &b- &e%s", it.name))}
-            .forEach { sender.sendMessage(it)}
+            .map { it -> Utils.colorize(String.format(" &b- &e%s", it.name)) }
+            .forEach { sender.sendMessage(it) }
 
         if (sender !is Player) {
             return

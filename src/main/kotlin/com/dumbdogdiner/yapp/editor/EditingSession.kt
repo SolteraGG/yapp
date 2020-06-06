@@ -12,7 +12,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.Inventory
 
 /**
  * A player's editing session.
@@ -42,8 +41,8 @@ class EditingSession(val player: Player, val course: Course, private val type: T
      */
     fun end(): Course {
         // Todo: This is slow.
-        val checkpointTool = player.inventory.find { it == checkpointTool.clone()  }
-        val boundaryTool = player.inventory.find { it == boundaryTool.clone()  }
+        val checkpointTool = player.inventory.find { it == checkpointTool.clone() }
+        val boundaryTool = player.inventory.find { it == boundaryTool.clone() }
         val jumpPadTool = player.inventory.find { it == jumpPadTool.clone() }
 
         if (checkpointTool != null) {

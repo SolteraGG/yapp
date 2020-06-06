@@ -3,7 +3,6 @@ package com.dumbdogdiner.yapp.courses
 import com.dumbdogdiner.yapp.Base
 import com.dumbdogdiner.yapp.utils.Utils
 import com.okkero.skedule.schedule
-
 import org.bukkit.Location
 
 class CourseManager : Base {

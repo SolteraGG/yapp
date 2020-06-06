@@ -1,15 +1,12 @@
 package com.dumbdogdiner.yapp.utils
 
 import com.dumbdogdiner.yapp.Base
-
+import com.okkero.skedule.BukkitDispatcher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 import org.bukkit.entity.Player
-
-import com.okkero.skedule.BukkitDispatcher
 
 /**
  * Utility class for dealing with elapsed time.
@@ -32,7 +29,7 @@ object TimerUtils {
             running = true
 
             job = GlobalScope.launch(BukkitDispatcher(plugin)) {
-                while(running) {
+                while (running) {
                     updateDisplay()
                     delay(100)
                 }

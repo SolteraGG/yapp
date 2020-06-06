@@ -1,7 +1,6 @@
 package com.dumbdogdiner.yapp.listeners
 
 import com.dumbdogdiner.yapp.Base
-
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action

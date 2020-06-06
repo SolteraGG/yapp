@@ -3,10 +3,8 @@ package com.dumbdogdiner.yapp.courses
 import com.dumbdogdiner.yapp.Base
 import com.dumbdogdiner.yapp.YappParkourPlugin
 import com.dumbdogdiner.yapp.utils.Utils
-
 import java.io.File
 import java.io.IOException
-
 import org.bukkit.Location
 import org.bukkit.configuration.InvalidConfigurationException
 import org.bukkit.configuration.file.FileConfiguration
@@ -111,5 +109,4 @@ class CourseStorage : Base {
         storage.set(course.name, null)
         Utils.log("Deleted course '${course.name}' from disk.")
     }
-
 }

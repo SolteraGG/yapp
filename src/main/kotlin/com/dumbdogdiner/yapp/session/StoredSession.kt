@@ -1,7 +1,6 @@
 package com.dumbdogdiner.yapp.session
 
 import com.dumbdogdiner.yapp.courses.Course
-
 import org.bukkit.OfflinePlayer
 
 /**

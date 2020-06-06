@@ -71,7 +71,6 @@ object Language {
     val courseSaved
         get() = "$prefix${get("$path.courseSaved")}"
 
-
     val blockIsCheckpoint
         get() = "$prefix${get("$path.blockIsCheckpoint")}"
 }

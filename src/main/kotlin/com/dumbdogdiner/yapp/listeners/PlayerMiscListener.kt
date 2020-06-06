@@ -5,7 +5,6 @@ import com.dumbdogdiner.yapp.utils.Language
 import com.dumbdogdiner.yapp.utils.SoundUtils
 import com.dumbdogdiner.yapp.utils.Utils
 import org.bukkit.entity.Player
-
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent

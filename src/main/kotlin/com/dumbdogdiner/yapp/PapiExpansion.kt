@@ -1,10 +1,8 @@
 package com.dumbdogdiner.yapp
 
 import com.dumbdogdiner.yapp.utils.Utils
-
-import org.bukkit.entity.Player
-
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
+import org.bukkit.entity.Player
 
 /**
  * PlaceholderAPI Expansion class
@@ -48,14 +46,14 @@ class PapiExpansion : PlaceholderExpansion(), Base {
                 return "INVALID"
             }
 
-            return when(val cmd = args.subList(2, args.size).joinToString(separator = "_")) {
+            return when (val cmd = args.subList(2, args.size).joinToString(separator = "_")) {
                 "checkpoint_count" -> {
                     course.getCheckpoints().size.toString()
                 }
                 "personal_best" -> {
                     val attempt = sessionManager.storage.getPlayerBest(player, course)
                     if (attempt == -1.0) {
-                       return "Not Attempted"
+                        return "Not Attempted"
                     }
                     return attempt.toString()
                 }

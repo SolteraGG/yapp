@@ -1,9 +1,9 @@
 package com.dumbdogdiner.yapp.utils
 
-import org.bukkit.Location
-import org.bukkit.util.Vector
 import kotlin.math.cos
 import kotlin.math.sin
+import org.bukkit.Location
+import org.bukkit.util.Vector
 
 object VectorUtils {
     /**

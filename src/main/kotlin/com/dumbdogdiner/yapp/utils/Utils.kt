@@ -1,6 +1,10 @@
 package com.dumbdogdiner.yapp.utils
 
-import org.bukkit.*
+import org.bukkit.Bukkit
+import org.bukkit.ChatColor
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.Server
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
@@ -84,12 +88,10 @@ object Utils {
 
         val world = Bukkit.getWorld(delimited[0])
         if (world == null) {
-           log("Failed to deserilize location '$raw' - world '${delimited[0]}' does not exist.")
+            log("Failed to deserilize location '$raw' - world '${delimited[0]}' does not exist.")
             return null
         }
 
         return Location(world, delimited[1].toDouble(), delimited[2].toDouble(), delimited[3].toDouble())
     }
-
 }
-

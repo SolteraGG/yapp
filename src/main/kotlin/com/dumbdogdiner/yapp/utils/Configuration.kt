@@ -63,5 +63,5 @@ object Configuration : Base {
         plugin.reloadConfig()
     }
 
-    private const val path = "language.";
+    private const val path = "language."
 }

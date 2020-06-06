@@ -58,7 +58,6 @@ class Checkpoint(private var endCheckpoint: Location) {
         return endCheckpoint
     }
 
-
     /**
      * Check whether the given player is inside the course's boundary.
      */

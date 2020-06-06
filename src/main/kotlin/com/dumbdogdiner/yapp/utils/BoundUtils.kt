@@ -47,5 +47,5 @@ object BoundUtils {
     /**
      * Utility vector class for storing start and end locations.
      */
-    class Edge(val start: Location, val end: Location) {}
+    class Edge(val start: Location, val end: Location)
 }

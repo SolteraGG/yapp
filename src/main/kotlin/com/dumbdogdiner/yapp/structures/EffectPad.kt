@@ -11,8 +11,8 @@ import org.bukkit.potion.PotionEffectType
  * TODO: Add a clear effect option.
  */
 class EffectPad(
-        location: Location,
-        val effects: MutableList<PotionEffect>
+    location: Location,
+    val effects: MutableList<PotionEffect>
 ) : Pad(location, particle) {
     /**
      * Apply all potion effects attached to this pad to the player.
@@ -33,7 +33,7 @@ class EffectPad(
          * Convert an EffectPad.Effect into a PotionEffectType.
          */
         fun getEffect(effect: Effect): PotionEffectType {
-            return when(effect) {
+            return when (effect) {
                 Effect.SPEED -> PotionEffectType.SPEED
                 Effect.JUMP -> PotionEffectType.JUMP
                 Effect.SLOW -> PotionEffectType.SLOW
