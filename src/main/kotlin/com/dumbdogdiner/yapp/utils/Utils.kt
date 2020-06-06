@@ -8,6 +8,9 @@ import org.bukkit.Server
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
+/**
+ * Generic util methods.
+ */
 object Utils {
     /**
      * Is this material a pressure plate? I don't know, ask this function!~

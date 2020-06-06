@@ -1,5 +1,8 @@
 package com.dumbdogdiner.yapp.utils
 
+/**
+ * Utility methods to deal with MATH OWO
+ */
 object MathUtils {
     /**
      * Find the parameter t that would give the linear interpolation result

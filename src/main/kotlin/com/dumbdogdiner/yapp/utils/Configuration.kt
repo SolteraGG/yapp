@@ -18,6 +18,7 @@ object Configuration : Base {
 
         config.addDefault("disableSound", false)
         config.addDefault("enableControls", false)
+        config.addDefault("disablePadParticles", false)
 
         // BEGIN LINGUISTICS
         config.addDefault(path + "prefix", "&d&lParkour &r&8» &r")

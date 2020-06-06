@@ -30,7 +30,7 @@ class EffectPadEditor(
     /**
      * Add an effect to the pad.
      */
-    fun addEffect(effect: EffectPad.Effect, duration: Int, strength: Int) {
-        pad.effects.add(PotionEffect(EffectPad.getEffect(effect), duration, strength))
+    fun addEffect(effect: EffectPad.Effect, duration: Int, strength: Int): Boolean {
+        return pad.addEffect(effect, duration, strength)
     }
 }

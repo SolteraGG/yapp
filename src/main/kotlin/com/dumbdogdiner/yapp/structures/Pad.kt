@@ -9,12 +9,21 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.bukkit.Location
 import org.bukkit.Particle
+import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 
 /**
  * Represents a pressure plate that the player can step on, causing something interesting to happen owo~
  */
 abstract class Pad(private val location: Location, private val particle: Particle) : Base {
+
+    /** The type of the pad. */
+    enum class Type {
+        JUMP,
+        EFFECT,
+        MARKER
+    }
+
     /**
      * Whether the pad is currently spawning particle effects.
      */
@@ -31,9 +40,16 @@ abstract class Pad(private val location: Location, private val particle: Particl
     private val players = HashMap<String, Player>()
 
     /**
+     * The type of the pad.
+     */
+    abstract val type: Type
+
+    /**
      * Called when the player steps on the pressure plate.
      */
     abstract fun trigger(player: Player)
+
+    abstract fun serialize(config: FileConfiguration, path: String)
 
     /**
      * Called when a player enters the course containing this pad.
@@ -59,9 +75,12 @@ abstract class Pad(private val location: Location, private val particle: Particl
 
     /**
      * Spawns a coroutine that repeatedly creates particles above the pad.
-     * TODO: Add config option to disable particles.
      */
     private fun startParticles() {
+        if (config.getBoolean("disablePadParticles")) {
+            return
+        }
+
         isActive = true
         job = GlobalScope.launch(BukkitDispatcher(plugin)) {
             while (isActive) {
@@ -75,6 +94,10 @@ abstract class Pad(private val location: Location, private val particle: Particl
      * Stop the coroutine spawning particles.
      */
     private fun stopParticles() {
+        if (config.getBoolean("disablePadParticles")) {
+            return
+        }
+
         isActive = false
         job.cancel()
     }

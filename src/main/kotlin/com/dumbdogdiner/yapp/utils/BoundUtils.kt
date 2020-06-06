@@ -4,6 +4,9 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.util.BoundingBox
 
+/**
+ * Methods for dealing with bounding boxes.
+ */
 object BoundUtils {
     /**
      * Return the edges of a bounding box.

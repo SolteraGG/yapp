@@ -22,11 +22,8 @@ class JumpPadEditor(
     val checkpoint: Checkpoint,
     val location: Location
 ) : Base {
-    private val pad = JumpPad(
-            location,
-            VectorUtils.rotFromLoc(session.player.location),
-            1
-    )
+    private var direction = VectorUtils.rotFromLoc(session.player.location)
+    private var magnitude = 1
 
     private lateinit var job: Job
     private var shouldUpdate = false
@@ -48,8 +45,8 @@ class JumpPadEditor(
         job = GlobalScope.launch(BukkitDispatcher(plugin)) {
             while (shouldUpdate) {
                 val dir = VectorUtils.rotFromLoc(session.player.location)
-                if (pad.direction != dir) {
-                    pad.direction = dir
+                if (direction != dir) {
+                    direction = dir
                     SoundUtils.tick(
                             session.player,
                             MathUtils.inverseLerp(0f, 90f, session.player.location.pitch) + 0.5f
@@ -66,6 +63,6 @@ class JumpPadEditor(
     fun end(): JumpPad {
         shouldUpdate = false
         job.cancel()
-        return pad
+        return JumpPad(location, direction, magnitude)
     }
 }

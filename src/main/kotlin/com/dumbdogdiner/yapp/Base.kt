@@ -6,6 +6,9 @@ import com.dumbdogdiner.yapp.session.SessionManager
 import java.util.logging.Logger
 import org.bukkit.configuration.file.FileConfiguration
 
+/**
+ * Base interface child classes can implement to easily gain access to plugin structures.
+ */
 interface Base {
     val plugin: YappParkourPlugin
         get() = YappParkourPlugin.instance
