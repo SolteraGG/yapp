@@ -42,6 +42,8 @@ class YappParkourPlugin : JavaPlugin() {
         if (server.pluginManager.getPlugin("PlaceholderAPI") != null) {
             Utils.log("Attached PlaceholderAPI extension.")
             PapiExpansion().register()
+        } else {
+            Utils.log("PlaceholderAPI is not installed - skipping placeholder registration.")
         }
 
         // Register commands owo~
