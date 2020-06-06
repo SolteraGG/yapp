@@ -3,13 +3,15 @@
 [![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.jcx.ovh%2Fjob%2FDumbDogDiner%2Fjob%2Fparkour%2Fjob%2Fstable%2F&label=jenkins%20%7C%20stable&logo=jenkins&logoColor=white)](https://ci.jcx.ovh/job/DumbDogDiner/job/parkour/job/stable/)
 [![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.jcx.ovh%2Fjob%2FDumbDogDiner%2Fjob%2Fparkour%2Fjob%2Fdev%2F&label=jenkins%20%7C%20dev&logo=jenkins&logoColor=white)](https://ci.jcx.ovh/job/DumbDogDiner/job/parkour/job/dev/)
 
-**YaPP** - interactive Minecraft Parkour plugin with a personality.
+Interactive Minecraft Parkour plugin with a personality.
 
 ## Features
+
 - Course Editor - create courses by using the `/pk create <name>` command, and use the editor to add checkpoints to the course. Once finished, drop the editor, and the course will be finalized.
 - Personal bests & server records - once players complete the course for the first time, they will set a personal best. Beating this, and the overall server best, displays special messages in chat.
 
 ## Commands
+
 **Requires:** `default`
 `/pk quit` - stop the current parkour session (both physical and the editor).
 
@@ -19,6 +21,7 @@
 `/pk list` - list all available courses.
 
 ## Placeholders
+
 Parkour has a few placeholders for use with PlaceholderAPI.
 
 - `parkour_course_<name>_record` - the fastest time this course has been completed in. Given in seconds.
@@ -26,6 +29,7 @@ Parkour has a few placeholders for use with PlaceholderAPI.
 - `parkour_course_<name>_checkpoint_count` - the number of checkpoints in this course.
 
 ## Next Steps
+
 - Bounding boxes - areas which reset players back to the previous checkpoint if they leave without passing the next checkpoint.
 - Parkour tools - controls with which players can jump back to previous checkpoints, or the start of the course.
 - Effect pads - grant players who step on them potion effects for a wider variety of possible courses.
