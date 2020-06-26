@@ -129,7 +129,7 @@ class SessionStorage : Base {
      * Fetch the nth time on a given course.
      */
     fun fetchNthTime(course: Course, position: Int): Double? {
-        val sessions: List<StoredSession> = fetchOrderedSessions(course) ?: return null
+        val sessions: List<StoredSession> = fetchOrderedSessions(course)
         val session = sessions.getOrNull(position) ?: return null
         return session.time
     }
