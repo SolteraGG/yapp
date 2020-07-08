@@ -2,6 +2,8 @@ package com.dumbdogdiner.yapp.courses
 
 import com.dumbdogdiner.yapp.Base
 import org.bukkit.Location
+import org.bukkit.entity.Player
+import org.bukkit.util.BoundingBox
 
 class Course : Base {
     var name = ""
@@ -10,18 +12,23 @@ class Course : Base {
     // Object accesses are quicker than lists?
     private val checkpoints = mutableListOf<Checkpoint>()
 
+    // Boundaries
+    private val boundaries = mutableListOf<BoundingBox>()
+
     /**
      * Create and add a checkpoint to this course at the given location.
      */
-    fun addCheckpointAtLocation(loc: Location) {
+    fun addCheckpointAtLocation(loc: Location): Course {
         addCheckpoint(Checkpoint(loc))
+        return this
     }
 
     /**
      * Add a checkpoint to this course.
      */
-    fun addCheckpoint(checkpoint: Checkpoint) {
+    fun addCheckpoint(checkpoint: Checkpoint): Course {
         checkpoints.add(checkpoint)
+        return this
     }
 
     /**
@@ -66,5 +73,30 @@ class Course : Base {
      */
     fun getCheckpointLocations(): List<Location> {
         return checkpoints.map { it.getEndCheckpoint() }
+    }
+
+    /**
+     * Add a bounding box to this checkpoint.
+     * Chainable.
+     */
+    fun addBoundaries(box: BoundingBox): Course {
+        boundaries.add(box)
+        return this
+    }
+
+    /**
+     * Check whether the given player is inside the course's boundary.
+     */
+    fun isPlayerInBoundary(player: Player): Boolean {
+        if (boundaries.size == 0) {
+            return true
+        }
+
+        for (boundary in boundaries) {
+            if (boundary.contains(player.location.toVector())) {
+                return true
+            }
+        }
+        return false
     }
 }

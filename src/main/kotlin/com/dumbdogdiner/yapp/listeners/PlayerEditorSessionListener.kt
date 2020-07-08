@@ -21,7 +21,7 @@ class PlayerEditorSessionListener : Listener, Base {
 
         val session = editingSessionManager.getEditingSession(e.player) ?: return
 
-        session.handleCheckpointClicked(e)
+        session.handleBlockClicked(e)
     }
 
     /**

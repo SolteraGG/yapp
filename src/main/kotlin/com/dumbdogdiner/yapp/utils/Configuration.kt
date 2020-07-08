@@ -34,6 +34,7 @@ object Configuration : Base {
         config.addDefault(path + "nextCheckpoint", "&e&lCheckpoint &r&bpassed!")
         config.addDefault(path + "restartCourse", "&bTimer restarted!")
         config.addDefault(path + "newRecord", "&d&lRECORD&b - &c%TIME%s &bon &a'%COURSE%' &bby &c%PLAYER%")
+        config.addDefault(path + "boundaryBreak", "&cYou left the course boundaries!")
         config.addDefault(path + "exitSession", "&bExited the current session.")
 
         // Command-specific linguistics.
@@ -52,6 +53,8 @@ object Configuration : Base {
         config.addDefault(path + "badWorld", "Trans-dimensional parkour is &c&lILLEGAL&r. All checkpoints must be in the same world.")
         config.addDefault(path + "badLength", "&c&lInsufficient length! &r&cMake sure a course has at least 2 checkpoints before exiting.")
         config.addDefault(path + "badBlock", "&cThis is not a pressure plate!")
+        config.addDefault(path + "boundaryCornerAdded", "&bAdded a boundary corner at %x%, %y%, %z%.")
+        config.addDefault(path + "boundaryBoxAdded", "&bCreated a boundary at %x1%, %y1%, %z1% to %x2%, %y2%, %z2% (%volume%)")
         config.addDefault(path + "courseSaved", "&bSaved course!")
 
         // Misc Linguistics

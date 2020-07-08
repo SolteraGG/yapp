@@ -22,7 +22,7 @@ class EditingSessionManager : Base {
         }
 
         if (sessionManager.isPlayerInSession(player)) {
-            sessionManager.endSession(player, returnToStart = false, escapeRecord = true)
+            sessionManager.endSession(player, returnToStart = false, didFinish = false)
         }
 
         val editingSession = EditingSession(player, course, type)

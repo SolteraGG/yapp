@@ -12,6 +12,8 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.ItemStack
+import org.bukkit.util.BoundingBox
 
 /**
  * A player's editing session.
@@ -40,34 +42,37 @@ class EditingSession(val player: Player, val course: Course, private val type: T
      * End this editing session.
      */
     fun end(): Course {
-        // Todo: This is slow.
-        val checkpointTool = player.inventory.find { it == checkpointTool.clone() }
-        val boundaryTool = player.inventory.find { it == boundaryTool.clone() }
-        val jumpPadTool = player.inventory.find { it == jumpPadTool.clone() }
-
-        if (checkpointTool != null) {
-            player.inventory.remove(checkpointTool)
-        }
-
-        if (boundaryTool != null) {
-            player.inventory.remove(boundaryTool)
-        }
-
-        if (jumpPadTool != null) {
-            player.inventory.remove(jumpPadTool)
-        }
-
+        editorTools.forEach { player.inventory.remove(it) }
         return course
     }
 
     /**
-     * Handle a checkpoint clicked event.
+     * Handle a player clicking a block while in a session.
      */
-    fun handleCheckpointClicked(e: PlayerInteractEvent) {
+    fun handleBlockClicked(e: PlayerInteractEvent) {
         val item = e.item ?: return
+
+        if (!isCourseTool(item)) {
+            return
+        }
+
+        when (item) {
+            checkpointTool -> performCheckpointToolAction(e)
+            boundaryTool -> performBoundaryToolAction(e)
+        }
+
+        return
+    }
+
+    /**
+     * Perform an action with the checkpoint tool.
+     */
+    private fun performCheckpointToolAction(e: PlayerInteractEvent) {
         val block = e.clickedBlock ?: return
 
-        if (item != checkpointTool.clone()) {
+        if (!Utils.isPressurePlate(block.type)) {
+            player.sendMessage(Language.badBlock)
+            SoundUtils.error(player)
             return
         }
 
@@ -85,9 +90,9 @@ class EditingSession(val player: Player, val course: Course, private val type: T
     }
 
     /**
-     * Handle a player clicking any other block with the boundary tool.
+     * Perform an action with the boundary tool.
      */
-    fun handleEverythingElseGotClicked(e: PlayerInteractEvent) {
+    private fun performBoundaryToolAction(e: PlayerInteractEvent) {
         val item = e.item ?: return
         val block = e.clickedBlock ?: return
 
@@ -97,7 +102,34 @@ class EditingSession(val player: Player, val course: Course, private val type: T
 
         if (boundaryCorner == null) {
             boundaryCorner = block.location
+            player.sendMessage(
+                Language.boundaryCornerAdded
+                    .replace("%x%", block.location.x.toString())
+                    .replace("%y%", block.location.y.toString())
+                    .replace("%z%", block.location.z.toString())
+
+            )
+            SoundUtils.info(player)
+            return
         }
+
+        val bounds = BoundingBox(boundaryCorner!!.x, boundaryCorner!!.y, boundaryCorner!!.z, block.location.x, block.location.y, block.location.z)
+        course.addBoundaries(bounds)
+
+        player.sendMessage(
+            Language.boundaryBoxAdded
+                .replace("%x1%", bounds.maxX.toString())
+                .replace("%y1%", bounds.maxY.toString())
+                .replace("%z1%", bounds.maxZ.toString())
+                .replace("%x2%", bounds.minX.toString())
+                .replace("%y2%", bounds.minY.toString())
+                .replace("%z2%", bounds.minZ.toString())
+                .replace("%volume%", bounds.volume.toString())
+        )
+        SoundUtils.info(player)
+
+        // Reset boundary corner
+        boundaryCorner = null
     }
 
     /**
@@ -147,9 +179,7 @@ class EditingSession(val player: Player, val course: Course, private val type: T
      */
     fun handleDropEvent(e: PlayerDropItemEvent) {
         if (
-            e.itemDrop.itemStack != checkpointTool ||
-            e.itemDrop.itemStack != boundaryTool ||
-            e.itemDrop.itemStack != jumpPadTool
+            !isCourseTool(e.itemDrop.itemStack)
         ) {
             return
         }
@@ -213,6 +243,14 @@ class EditingSession(val player: Player, val course: Course, private val type: T
                     "&cDrop this tool to end the editing session."
             ))
             it
+        }
+        private val editorTools = listOf(checkpointTool, boundaryTool, jumpPadTool)
+
+        /**
+         * Return whether the specified item stack is a checkpoint tool.
+         */
+        private fun isCourseTool(item: ItemStack): Boolean {
+            return editorTools.contains(item)
         }
     }
 }

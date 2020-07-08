@@ -28,7 +28,7 @@ class SessionManager : Base {
      */
     fun createSession(player: Player, course: Course): Session? {
         if (isPlayerInSession(player)) {
-            endSession(player, returnToStart = false, escapeRecord = true)
+            endSession(player, returnToStart = false, didFinish = true)
         }
 
         // Prevent creation of sessions if player is in an editing session.
@@ -53,21 +53,21 @@ class SessionManager : Base {
     /**
      * End a player's current session.
      */
-    fun endSession(player: Player, returnToStart: Boolean, escapeRecord: Boolean = false) {
-        getSession(player)?.let { endSession(it, returnToStart, escapeRecord) }
+    fun endSession(player: Player, returnToStart: Boolean, didFinish: Boolean = false) {
+        getSession(player)?.let { endSession(it, returnToStart, didFinish) }
     }
 
     /**
      * End the given session.
      * TODO: PlaceholderAPI
      */
-    fun endSession(session: Session, returnToStart: Boolean, escapeRecord: Boolean = false) {
-        session.end(returnToStart)
+    fun endSession(session: Session, returnToStart: Boolean, didFinish: Boolean = false) {
+        val time = session.end(didFinish = didFinish, returnToStart = returnToStart)
         sessions.remove(session.player)
 
         Utils.log("Ended parkour session for player '${session.player.uniqueId}'.")
 
-        if (escapeRecord) {
+        if (!didFinish) {
             session.player.sendMessage(Language.exitSession)
             return SoundUtils.error(session.player)
         }
@@ -78,7 +78,7 @@ class SessionManager : Base {
 
         storedSession.course = course
         storedSession.player = player
-        storedSession.time = session.end(false).toDouble() / 1000
+        storedSession.time = time.toDouble() / 1000
 
         player.sendMessage(Language.finishCourse.replace("%COURSE%", course.name, ignoreCase = true))
 
@@ -129,7 +129,7 @@ class SessionManager : Base {
     fun handleCheckpointInteraction(e: PlayerInteractEvent) {
         val block = e.clickedBlock ?: return
 
-        // If recieved both events, trigger.
+        // If received both events, trigger.
         val redstoneUpdate = redstoneUpdates[block.location]
         if (redstoneUpdate != null) {
             return handleCombined(e, redstoneUpdate)

@@ -10,6 +10,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.ItemStack
 
 class Session(val player: Player, val course: Course) : Base {
     private var previousCheckpointId = 0
@@ -47,7 +48,7 @@ class Session(val player: Player, val course: Course) : Base {
 
         // If last checkpoint, end session.
         if (nextCheckpointId == course.getCheckpoints().size) {
-            return sessionManager.endSession(this, false)
+            return sessionManager.endSession(this, returnToStart = false, didFinish = true)
         }
 
         player.sendMessage(Language.nextCheckpoint)
@@ -64,12 +65,11 @@ class Session(val player: Player, val course: Course) : Base {
     /**
      * End this session.
      */
-    fun end(returnToStart: Boolean): Long {
+    fun end(didFinish: Boolean, returnToStart: Boolean): Long {
         if (returnToStart) {
             player.teleport(course.getCheckpoints().first().getEndCheckpoint().clone().setDirection(player.location.direction))
         }
-
-        return timer.stop()
+        return timer.stop(didFinish)
     }
 
     /**
@@ -107,34 +107,48 @@ class Session(val player: Player, val course: Course) : Base {
 
     /**
      * Reset the editor tool.
+     * Todo: Quit on drop?
      */
     fun handleDropEvent(e: PlayerDropItemEvent) {
-        controls.forEach {
-            if (
-                it.type == e.itemDrop.itemStack.type &&
-                it.itemMeta.displayName == e.itemDrop.itemStack.itemMeta.displayName
-            ) {
-                e.isCancelled = true
-            }
+        if (isSessionControl(e.itemDrop.itemStack)) {
+            e.isCancelled = true
         }
     }
 
+    /**
+     * Check the player is still within course boundaries.
+     */
+    fun checkBounds() {
+        if (course.isPlayerInBoundary(player)) {
+            return
+        }
+        player.sendMessage(Language.boundaryBreak)
+        sessionManager.endSession(player, didFinish = false, returnToStart = false)
+    }
+
     companion object {
-        val returnItem = Utils.createItemStack(Material.EMERALD_BLOCK) {
+        private val returnItem = Utils.createItemStack(Material.EMERALD_BLOCK) {
             it.setDisplayName("&aReset")
             it.lore = Utils.colorize(listOf("Right click to return to the previous checkpoint.", "&cYour elapsed time will not reset."))
             it
         }
-        val resetItem = Utils.createItemStack(Material.GOLD_BLOCK) {
+        private val resetItem = Utils.createItemStack(Material.GOLD_BLOCK) {
             it.setDisplayName("&aRestart")
             it.lore = Utils.colorize(listOf("Right click to return to the start of the course.", "Your elapsed time &awill &rbe reset."))
             it
         }
-        val exitItem = Utils.createItemStack(Material.REDSTONE_BLOCK) {
+        private val exitItem = Utils.createItemStack(Material.REDSTONE_BLOCK) {
             it.setDisplayName("&aExit")
             it.lore = Utils.colorize(listOf("Right click to exit this course.", "&cYour elapsed time will not reset."))
             it
         }
-        val controls = listOf(returnItem, resetItem, exitItem)
+        private val controls = listOf(returnItem, resetItem, exitItem)
+    }
+
+    /**
+     * Return whether the given item stack is a session control.
+     */
+    private fun isSessionControl(e: ItemStack): Boolean {
+        return controls.contains(e)
     }
 }

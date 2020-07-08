@@ -82,7 +82,7 @@ class ParkourCommand : TabExecutor, Base {
 
         val session = sessionManager.getSession(sender)
         if (session != null) {
-            return sessionManager.endSession(session, returnToStart = false, escapeRecord = true)
+            return sessionManager.endSession(session, returnToStart = false, didFinish = false)
         }
 
         val editingSession = editingSessionManager.getEditingSession(sender)

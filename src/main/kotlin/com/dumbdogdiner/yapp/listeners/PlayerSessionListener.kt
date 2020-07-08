@@ -35,8 +35,13 @@ class PlayerSessionListener : Listener, Base {
      */
     @EventHandler
     fun onPlayerMove(e: PlayerMoveEvent) {
-        if (e.player.isFlying && sessionManager.isPlayerInSession(e.player)) {
-            sessionManager.endSession(e.player, returnToStart = false, escapeRecord = true)
+        val session = sessionManager.getSession(e.player) ?: return
+
+        if (e.player.isFlying) {
+            sessionManager.endSession(e.player, returnToStart = false, didFinish = true)
+            return
         }
+
+        session.checkBounds()
     }
 }

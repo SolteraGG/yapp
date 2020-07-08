@@ -22,7 +22,7 @@ object TimerUtils {
          */
         fun start() {
             if (running) {
-                stop()
+                stop(didFinish = false)
             }
 
             start = System.currentTimeMillis()
@@ -39,11 +39,11 @@ object TimerUtils {
         /**
          * Stop the timer, returning the duration it was running for.
          */
-        fun stop(): Long {
+        fun stop(didFinish: Boolean): Long {
             running = false
             job.cancel()
 
-            player.sendActionBar(Utils.colorize("&a&lCourse complete!"))
+            player.sendActionBar(Utils.colorize(if (didFinish) "&a&lCourse complete!" else "&c&lCourse exited."))
 
             return System.currentTimeMillis() - start
         }

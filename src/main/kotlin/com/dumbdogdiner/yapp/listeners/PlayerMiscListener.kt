@@ -50,6 +50,7 @@ class PlayerMiscListener : Listener, Base {
     /**
      * Prevent naughty boys (like me uwu~) from breaking checkpoint markers.
      */
+    @EventHandler
     fun onBreakBlock(e: BlockBreakEvent) {
         if (!Utils.isPressurePlate(e.block.type)) {
             return

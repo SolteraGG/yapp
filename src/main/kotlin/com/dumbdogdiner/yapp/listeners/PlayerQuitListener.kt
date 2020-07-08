@@ -13,7 +13,7 @@ class PlayerQuitListener : Listener, Base {
     fun onPlayerQuit(e: PlayerQuitEvent) {
         if (plugin.sessionManager.isPlayerInSession(e.player)) {
             // Dont allow players to store records by leaving sessions.
-            plugin.sessionManager.endSession(e.player, returnToStart = false, escapeRecord = true)
+            plugin.sessionManager.endSession(e.player, returnToStart = false, didFinish = false)
         } else if (plugin.editingSessionManager.isPlayerInEditingSession((e.player))) {
             // Drop editing progress on player quit.
             // TODO: This might be annoying.

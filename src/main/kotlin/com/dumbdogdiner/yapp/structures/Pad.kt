@@ -44,7 +44,7 @@ abstract class Pad(private val location: Location, private val particle: Particl
      */
     abstract val type: Type
 
-    /**
+    /**sc
      * Called when the player steps on the pressure plate.
      */
     abstract fun trigger(player: Player)
@@ -84,7 +84,7 @@ abstract class Pad(private val location: Location, private val particle: Particl
         isActive = true
         job = GlobalScope.launch(BukkitDispatcher(plugin)) {
             while (isActive) {
-                location.world.spawnParticle(particle, location.clone().add(0.0, 0.5, 0.0), 20)
+                location.world.spawnParticle(particle, location.clone(), 20)
                 delay(1000)
             }
         }

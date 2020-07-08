@@ -36,6 +36,8 @@ object Language {
         get() = "$prefix${get("$path.restartCourse")}"
     val newRecord
         get() = "$prefix${get("$path.newRecord")}"
+    val boundaryBreak
+        get() = "$prefix${get("$path.boundaryBreak")}"
     val exitSession
         get() = "$prefix${get("$path.exitSession")}"
 
@@ -50,24 +52,34 @@ object Language {
     // Editing linguistics
     val createEditingSession
         get() = "$prefix${get("$path.createEditingSession")}"
+
     val courseNotFound
         get() = "$prefix${get("$path.courseNotFound")}"
     val courseExists
         get() = "$prefix${get("$path.courseExists")}"
+
     val checkpointNotFound
         get() = "$prefix${get("$path.checkpointNotFound")}"
     val checkpointExists
         get() = "$prefix${get("$path.checkpointExists")}"
+
     val badBlock
         get() = "$prefix${get("$path.badBlock")}"
     val badLength
         get() = "$prefix${get("$path.badLength")}"
     val badWorld
         get() = "$prefix${get("$path.badWorld")}"
+
     val checkpointCreated
         get() = "$prefix${get("$path.checkpointCreated")}"
     val checkpointRemoved
         get() = "$prefix${get("$path.checkpointRemoved")}"
+
+    val boundaryCornerAdded
+        get() = "$prefix${get("$path.boundaryCornerAdded")}"
+    val boundaryBoxAdded
+        get() = "$prefix${get("$path.boundaryBoxAdded")}"
+
     val courseSaved
         get() = "$prefix${get("$path.courseSaved")}"
 
